@@ -1,104 +1,140 @@
 # 🎓 Student Productivity OS
 
-> A full-stack productivity platform designed to help students plan, track, and optimize their academic journey.
+> A Full-Stack Productivity Platform built for students to manage academics, coding progress, placements, goals, notes, and productivity analytics from a single dashboard.
 
 ![React](https://img.shields.io/badge/React-19-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 ![Node.js](https://img.shields.io/badge/Node.js-Express-green)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+![Vercel](https://img.shields.io/badge/Frontend-Vercel-black)
+![Render](https://img.shields.io/badge/Backend-Render-blue)
+![Status](https://img.shields.io/badge/Status-Active-success)
 
 ---
 
-## 🚀 Overview
+# 🌐 Live Demo
 
-Student Productivity OS is a modern productivity platform built specifically for students.
+### Frontend
 
-Instead of using separate tools for tasks, study planning, coding progress, placement tracking, notes, goals, and analytics, students can manage everything from a single dashboard.
+https://student-productivity-os.vercel.app
 
-The platform combines academic planning, productivity tracking, and career preparation into one centralized workspace.
+### Backend API
+
+https://student-productivity-os.onrender.com
 
 ---
 
-## ✨ Key Features
+# 🚀 Overview
 
-### 🔐 Authentication & Security
+Student Productivity OS is a centralized productivity platform designed specifically for students.
 
+Most students use separate tools for:
+
+* Task Management
+* Study Planning
+* Placement Tracking
+* Coding Progress
+* Notes
+* Goal Tracking
+* Productivity Analytics
+
+This project combines all of them into a single web application.
+
+The goal is to help students organize their academic journey, monitor progress, and improve productivity using data-driven insights.
+
+---
+
+# 🎯 Why I Built This
+
+As a Computer Science student, I found myself switching between multiple applications to manage tasks, study plans, coding practice, placements, notes, and goals.
+
+I built Student Productivity OS to solve this problem by creating a single platform where students can manage everything from one dashboard while also improving my full-stack development, deployment, authentication, and cloud engineering skills.
+
+---
+
+# ✨ Features
+
+## 🔐 Authentication & Security
+
+* User Registration
+* User Login
 * JWT Authentication
 * Protected Routes
-* Password Hashing with bcrypt
+* Password Hashing using bcrypt
+* User-Specific Data Isolation
 * Persistent Login Sessions
-* User-specific Data Isolation
 
 ---
 
-### 📋 Task Manager
+## 📋 Task Manager
 
-* Create, Update, Delete Tasks
-* Task Status Tracking
-* Search & Filtering
-* Completion Monitoring
-* Productivity Metrics
+* Create Tasks
+* Edit Tasks
+* Delete Tasks
+* Mark Tasks Complete
+* Search Tasks
+* Filter Tasks
+* Track Progress
 
 ---
 
-### 📚 Study Planner
+## 📚 Study Planner
 
-* Study Session Management
+* Create Study Sessions
 * Track Study Hours
 * Mark Sessions Complete
-* Study Progress Analytics
+* Study Progress Monitoring
 
 ---
 
-### 💼 Placement Tracker
+## 💼 Placement Tracker
 
-* Company Application Tracking
-* Placement Pipeline Monitoring
-* Interview Status Tracking
-* Success Analytics
-
----
-
-### 💻 Coding Tracker
-
-* Problem Solving History
-* Difficulty-wise Tracking
-* Coding Streak Monitoring
-* Coding Analytics
-
----
-
-### 📝 Notes Management
-
-* Create Notes
-* Edit Notes
-* Delete Notes
-* Categorized Notes
-* Search Functionality
-
----
-
-### 🎯 Goal Tracking
-
-* Goal Creation & Management
-* Progress Monitoring
-* Completion Status
-* Goal Analytics
-
----
-
-### 📊 Analytics Dashboard
-
-* Productivity Metrics
-* Task Completion Insights
-* Study Statistics
-* Coding Progress Charts
+* Track Applications
+* Company Pipeline Management
+* Interview Tracking
 * Placement Analytics
 
 ---
 
-### 👤 Student Profile
+## 💻 Coding Tracker
+
+* Track Solved Problems
+* Difficulty Tracking
+* Coding Progress Analytics
+* Coding Streak Monitoring
+
+---
+
+## 📝 Notes Management
+
+* Create Notes
+* Edit Notes
+* Delete Notes
+* Categorize Notes
+* Search Notes
+
+---
+
+## 🎯 Goal Tracking
+
+* Create Goals
+* Track Goal Progress
+* Update Goal Status
+* Completion Monitoring
+
+---
+
+## 📊 Analytics Dashboard
+
+* Productivity Insights
+* Task Statistics
+* Study Statistics
+* Coding Statistics
+* Placement Analytics
+
+---
+
+## 👤 Student Profile
 
 * Academic Information
 * Productivity Score
@@ -108,39 +144,66 @@ The platform combines academic planning, productivity tracking, and career prepa
 
 ---
 
-## 🖼️ Screenshots
+## 🌙 UI Features
 
-Add screenshots here after UI modernization.
+* Responsive Design
+* Dark Mode
+* Mobile Friendly Layout
+* Protected Navigation
 
-### Login Page
+---
 
-```bash
-/screenshots/login.png
+# ✅ Current Features Status
+
+| Feature           | Status |
+| ----------------- | ------ |
+| Authentication    | ✅      |
+| Dashboard         | ✅      |
+| Tasks             | ✅      |
+| Study Planner     | ✅      |
+| Placement Tracker | ✅      |
+| Coding Tracker    | ✅      |
+| Notes             | ✅      |
+| Goals             | ✅      |
+| Analytics         | ✅      |
+| Profile           | ✅      |
+| Dark Mode         | ✅      |
+| Cloud Deployment  | ✅      |
+
+---
+
+# 🏗️ System Architecture
+
+```text
+Frontend (React + Vite + TypeScript)
+                │
+                ▼
+      Express REST API
+                │
+                ▼
+       MongoDB Atlas
+                │
+                ▼
+      Cloud Infrastructure
 ```
 
-### Dashboard
+### Deployment Architecture
 
-```bash
-/screenshots/dashboard.png
-```
+```text
+Frontend  → Vercel
 
-### Tasks
+Backend   → Render
 
-```bash
-/screenshots/tasks.png
-```
+Database  → MongoDB Atlas
 
-### Analytics
-
-```bash
-/screenshots/analytics.png
+Auth      → JWT
 ```
 
 ---
 
-## 🏗️ Tech Stack
+# 🛠️ Tech Stack
 
-### Frontend
+## Frontend
 
 * React
 * TypeScript
@@ -150,33 +213,33 @@ Add screenshots here after UI modernization.
 * React Router
 * Recharts
 
-### Backend
+## Backend
 
 * Node.js
 * Express.js
 
-### Database
+## Database
 
 * MongoDB Atlas
-* Mongoose ODM
+* Mongoose
 
-### Authentication
+## Authentication
 
 * JWT
 * bcrypt
 
-### Deployment
+## Deployment
 
-* Vercel (Frontend)
-* Render (Backend)
+* Vercel
+* Render
 
 ---
 
-## 📂 Project Structure
+# 📂 Project Structure
 
-```bash
+```text
 student-productivity-os/
-
+Add screenshot here
 ├── backend/
 │   ├── config/
 │   ├── controllers/
@@ -202,9 +265,40 @@ student-productivity-os/
 
 ---
 
-## ⚙️ Local Development Setup
+# 📸 Screenshots
 
-### 1. Clone Repository
+> Screenshots will be updated as the UI evolves.
+
+### Login Page
+
+<img width="1915" height="999" alt="image" src="https://github.com/user-attachments/assets/e5eaaf7a-d01f-4700-842f-7d2e50ae5e9e" />
+
+
+### Dashboard
+
+<img width="1915" height="999" alt="image" src="https://github.com/user-attachments/assets/9cc86cce-7893-4567-a272-83921fe199c2" />
+
+
+### Tasks
+
+<img width="1915" height="999" alt="image" src="https://github.com/user-attachments/assets/5990733e-667e-4236-aadc-ab36118a20e3" />
+
+
+### Analytics
+
+<img width="1915" height="999" alt="image" src="https://github.com/user-attachments/assets/1deaf6c0-47f2-4f08-9230-5c76a45ad5e6" />
+
+
+### Profile
+
+<img width="1915" height="999" alt="image" src="https://github.com/user-attachments/assets/8a524291-4180-4e3e-b8c2-1f74c646ff03" />
+
+
+---
+
+# ⚙️ Local Development Setup
+
+## Clone Repository
 
 ```bash
 git clone https://github.com/Madhav0976/student-productivity-os.git
@@ -214,7 +308,7 @@ cd student-productivity-os
 
 ---
 
-### 2. Backend Setup
+## Backend Setup
 
 ```bash
 cd backend
@@ -226,7 +320,7 @@ cp .env.example .env
 npm run dev
 ```
 
-Backend Environment Variables:
+Backend Environment Variables
 
 ```env
 PORT=5000
@@ -238,7 +332,7 @@ CLIENT_URL=http://localhost:5173
 
 ---
 
-### 3. Frontend Setup
+## Frontend Setup
 
 ```bash
 cd frontend
@@ -250,7 +344,7 @@ cp .env.example .env
 npm run dev
 ```
 
-Frontend Environment Variables:
+Frontend Environment Variables
 
 ```env
 VITE_API_URL=http://localhost:5000/api
@@ -258,9 +352,9 @@ VITE_API_URL=http://localhost:5000/api
 
 ---
 
-## 🔌 API Endpoints
+# 🔌 API Endpoints
 
-### Authentication
+## Authentication
 
 ```http
 POST /api/auth/register
@@ -268,7 +362,7 @@ POST /api/auth/login
 GET  /api/auth/me
 ```
 
-### Tasks
+## Tasks
 
 ```http
 GET    /api/tasks
@@ -277,7 +371,7 @@ PUT    /api/tasks/:id
 DELETE /api/tasks/:id
 ```
 
-### Study
+## Study
 
 ```http
 GET    /api/study
@@ -286,7 +380,7 @@ PUT    /api/study/:id
 DELETE /api/study/:id
 ```
 
-### Placements
+## Placements
 
 ```http
 GET    /api/placements
@@ -295,7 +389,7 @@ PUT    /api/placements/:id
 DELETE /api/placements/:id
 ```
 
-### Coding
+## Coding
 
 ```http
 GET    /api/coding
@@ -304,7 +398,7 @@ PUT    /api/coding/:id
 DELETE /api/coding/:id
 ```
 
-### Notes
+## Notes
 
 ```http
 GET    /api/notes
@@ -313,7 +407,7 @@ PUT    /api/notes/:id
 DELETE /api/notes/:id
 ```
 
-### Goals
+## Goals
 
 ```http
 GET    /api/goals
@@ -322,7 +416,7 @@ PUT    /api/goals/:id
 DELETE /api/goals/:id
 ```
 
-### Analytics
+## Analytics
 
 ```http
 GET /api/analytics
@@ -330,21 +424,43 @@ GET /api/analytics
 
 ---
 
-## 🌍 Live Demo
+# ⚡ Challenges Faced
 
-### Frontend
+During development, several real-world engineering challenges were encountered:
 
-Add your Vercel URL here.
-
-### Backend
-
-Add your Render URL here.
+* JWT Authentication Flow
+* MongoDB Atlas Configuration
+* Render Deployment Issues
+* Vercel Deployment Issues
+* CORS Configuration
+* Protected Routes
+* API Integration
+* State Management
+* Production Environment Variables
 
 ---
 
-## 🛣️ Roadmap
+# 📚 What I Learned
 
-### Phase 1 ✅
+This project helped me gain hands-on experience in:
+
+* React + TypeScript Development
+* State Management using Zustand
+* REST API Design
+* JWT Authentication
+* MongoDB Atlas
+* Mongoose ODM
+* Express Middleware
+* Cloud Deployment
+* Git & GitHub Workflow
+* Frontend-Backend Integration
+* Production Debugging
+
+---
+
+# 🛣️ Roadmap
+
+## Phase 1 ✅ Core Platform
 
 * Authentication
 * Dashboard
@@ -355,70 +471,104 @@ Add your Render URL here.
 * Notes
 * Goals
 * Analytics
+* Deployment
 
-### Phase 2 🚧
+---
 
-* Modern UI/UX Redesign
-* Improved Dashboard
-* Advanced Analytics
-* Better Mobile Experience
+## Phase 2 🚧 UI/UX Modernization
 
-### Phase 3 🚧
+* Modern Dashboard Design
+* Better Analytics
+* Improved Navigation
+* Enhanced Mobile Experience
+* Advanced Empty States
+* Improved User Experience
+
+---
+
+## Phase 3 🚧 Productivity Features
 
 * Kanban Task Board
 * Calendar View
-* Deadline Reminders
+* Priority Management
 * Notifications
-* Productivity Scoring Engine
+* Deadline Tracking
+* Smart Productivity Scoring
 
-### Phase 4 🚧
+---
+
+## Phase 4 🚧 Resume-Worthy Features
 
 * Resume Builder
 * ATS Resume Scanner
 * Placement Intelligence
 * Career Insights
+* Interview Preparation Hub
 
-### Phase 5 🚧
+---
+
+## Phase 5 🚧 AI Features
 
 * AI Study Assistant
-* AI Task Planner
 * AI Productivity Coach
-
-### Phase 6 🚧
-
-* MCP Integrations
-* Google Calendar Sync
-* Gmail Integration
-* GitHub Activity Sync
-* Notion Sync
-* Custom MCP Server
+* AI Task Planning
+* AI Note Summarization
+* AI Goal Recommendations
 
 ---
 
-## 🤝 Contributing
+## Phase 6 🚧 MCP Integrations
 
-Contributions, suggestions, and feature requests are welcome.
-
-Fork the repository, create a feature branch, and submit a pull request.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
+* Google Calendar MCP
+* Gmail MCP
+* GitHub MCP
+* Notion MCP
+* LinkedIn MCP
+* AI Agent Workflows
+* Custom Student Productivity MCP Server
 
 ---
 
-## 👨‍💻 Author
+## Phase 7 🚧 SaaS Features
+
+* Team Workspaces
+* Subscription Plans
+* Productivity Reports
+* Collaboration Features
+* Public API
+* Multi-Tenant Architecture
+
+---
+
+# 🤝 Contributing
+
+Contributions, feature suggestions, and improvements are welcome.
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit changes
+4. Open a Pull Request
+
+---
+
+# ⭐ Support
+
+If you found this project useful, consider giving it a star.
+
+---
+
+# 👨‍💻 Author
 
 T. V. Bindu Madhav
 
 B.Tech CSE Student | Open Source Contributor | Full Stack Developer | AI/ML Enthusiast
 
-Building practical software products, AI applications, and productivity systems.
-
 GitHub: https://github.com/Madhav0976
 
 LinkedIn: https://www.linkedin.com/in/madhavtanguturi
 
-⭐ If you found this project interesting, consider giving it a star.
+---
+
+# 📄 License
+
+This project is licensed under the MIT License.
