@@ -557,18 +557,15 @@ If you found this project useful, consider giving it a star.
 
 ---
 
-# 👨‍💻 Author
+## 👨‍💻 Author
 
-T. V. Bindu Madhav
+**T. V. Bindu Madhav** *Computer Science & Engineering Student | Full Stack Developer | AI/ML Enthusiast*
 
-B.Tech CSE Student | Open Source Contributor | Full Stack Developer | AI/ML Enthusiast
-
-GitHub: https://github.com/Madhav0976
-
-LinkedIn: https://www.linkedin.com/in/madhavtanguturi
+* **GitHub:** [@Madhav0976](https://github.com/Madhav0976)
+* **LinkedIn:** [in/madhavtanguturi](https://www.linkedin.com/in/madhavtanguturi)
 
 ---
 
-# 📄 License
+## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/Madhav0976/student-productivity-os/blob/main/LICENSE) file for details.
