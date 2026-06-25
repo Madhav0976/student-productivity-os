@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import {
   Plus, Search, Filter, CheckSquare, Calendar, Flag, Trash2,
-  ChevronDown, SortAsc, X, Circle, CheckCircle2, Edit3, 
+  ChevronDown, SortAsc, X, Circle, CheckCircle2, Edit3,
   AlarmClock, Tag, MoreHorizontal, Archive
 } from "lucide-react";
 import { useTaskStore } from "../store/taskStore";
@@ -210,7 +210,7 @@ export default function Tasks() {
 
   const filteredTasks = useMemo(() => {
     let result = tasks;
-    
+
     // Apply search
     if (debouncedSearch) {
       const q = debouncedSearch.toLowerCase();
@@ -224,7 +224,7 @@ export default function Tasks() {
       case "high": result = result.filter((t) => t.priority === "High"); break;
       case "completed": result = result.filter((t) => t.status === "Completed"); break;
     }
-    
+
     return result.sort((a, b) => {
       if (a.status === "Completed" && b.status !== "Completed") return 1;
       if (b.status === "Completed" && a.status !== "Completed") return -1;
@@ -249,15 +249,105 @@ export default function Tasks() {
 
   return (
     <div className="space-y-4 animate-fade-in max-w-3xl">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-xl font-bold text-white flex items-center gap-2">
-            <CheckSquare size={18} className="text-blue-400" />
-            Tasks
-          </h1>
-          <p className="text-sm text-slate-500 mt-0.5">{completed}/{total} completed</p>
+      {/* Premium Header */}
+
+      <div className="flex flex-col gap-6">
+
+        <div className="flex items-start justify-between flex-wrap gap-4">
+
+          <div>
+
+            <p className="text-xs uppercase tracking-[0.25em] text-blue-400 font-semibold">
+              Workspace
+            </p>
+
+            <h1 className="text-4xl font-bold text-white mt-2">
+              Tasks
+            </h1>
+
+            <p className="text-slate-400 mt-2 max-w-xl">
+              Organize assignments, placement preparation,
+              coding practice and personal goals from one place.
+            </p>
+
+          </div>
+
+          <button
+            id="new-task-btn"
+            className="btn-brand px-5 py-3 rounded-xl flex items-center gap-2 shadow-lg"
+          >
+            <Plus size={18} />
+            New Task
+          </button>
+
         </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+          <div className="card p-4">
+            <p className="text-xs text-slate-500 uppercase">
+              Total
+            </p>
+
+            <h2 className="text-2xl font-bold mt-2">
+              {total}
+            </h2>
+          </div>
+
+          <div className="card p-4">
+
+            <p className="text-xs text-slate-500 uppercase">
+              Completed
+            </p>
+
+            <h2 className="text-2xl font-bold mt-2 text-green-400">
+              {completed}
+            </h2>
+
+          </div>
+
+          <div className="card p-4">
+
+            <p className="text-xs text-slate-500 uppercase">
+              Due Today
+            </p>
+
+            <h2 className="text-2xl font-bold mt-2 text-orange-400">
+
+              {
+                tasks.filter(
+                  t =>
+                    isToday(parseISO(t.dueDate)) &&
+                    t.status !== "Completed"
+                ).length
+              }
+
+            </h2>
+
+          </div>
+
+          <div className="card p-4">
+
+            <p className="text-xs text-slate-500 uppercase">
+              High Priority
+            </p>
+
+            <h2 className="text-2xl font-bold mt-2 text-red-400">
+
+              {
+                tasks.filter(
+                  t =>
+                    t.priority === "High" &&
+                    t.status !== "Completed"
+                ).length
+              }
+
+            </h2>
+
+          </div>
+
+        </div>
+
       </div>
 
       {/* Toolbar */}
@@ -285,11 +375,10 @@ export default function Tasks() {
             <button
               key={key}
               onClick={() => setFilter(key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 ${
-                filter === key
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 ${filter === key
                   ? "bg-brand-600/15 border border-brand-600/30 text-white"
                   : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
-              }`}
+                }`}
             >
               {label}
               {key === "overdue" && tasks.filter((t) => isOverdue(t.dueDate) && t.status !== "Completed").length > 0 && (
@@ -323,7 +412,7 @@ export default function Tasks() {
           ) : filteredTasks.length === 0 ? (
             <EmptyState
               type={searchQuery ? "search" : "tasks"}
-              action={!searchQuery ? { label: "Add your first task", onClick: () => {} } : undefined}
+              action={!searchQuery ? { label: "Add your first task", onClick: () => { } } : undefined}
             />
           ) : (
             filteredTasks.map((task) => (
@@ -346,25 +435,22 @@ export default function Tasks() {
                 </button>
 
                 {/* Title */}
-                <span className={`flex-1 text-sm truncate ${
-                  task.status === "Completed" ? "line-through text-slate-500" : "text-slate-200"
-                }`}>
+                <span className={`flex-1 text-sm truncate ${task.status === "Completed" ? "line-through text-slate-500" : "text-slate-200"
+                  }`}>
                   {task.title}
                 </span>
 
                 {/* Actions - shown on hover */}
                 <div className="task-actions flex items-center gap-1 ml-auto">
-                  <span className={`text-2xs flex-shrink-0 ${
-                    isOverdue(task.dueDate) && task.status !== "Completed" ? "text-red-400 font-medium" : "text-slate-500"
-                  }`}>
+                  <span className={`text-2xs flex-shrink-0 ${isOverdue(task.dueDate) && task.status !== "Completed" ? "text-red-400 font-medium" : "text-slate-500"
+                    }`}>
                     {formatDateShort(task.dueDate)}
                   </span>
-                  
-                  <span className={`badge flex-shrink-0 ${
-                    task.priority === "High" ? "badge-high" 
-                    : task.priority === "Medium" ? "badge-medium" 
-                    : "badge-low"
-                  }`}>
+
+                  <span className={`badge flex-shrink-0 ${task.priority === "High" ? "badge-high"
+                      : task.priority === "Medium" ? "badge-medium"
+                        : "badge-low"
+                    }`}>
                     <Flag size={9} />
                     {task.priority}
                   </span>
