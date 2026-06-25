@@ -1,4 +1,5 @@
 import React from 'react';
+import { cn } from '../../utils/cn';
 
 export interface CardProps {
     children: React.ReactNode;
@@ -6,6 +7,7 @@ export interface CardProps {
     subtitle?: React.ReactNode;
     action?: React.ReactNode;
     className?: string;
+    variant?: 'default' | 'outlined' | 'ghost';
 }
 
 const Card: React.FC<CardProps> = ({
@@ -13,13 +15,24 @@ const Card: React.FC<CardProps> = ({
     title,
     subtitle,
     action,
-    className = '',
+    className,
+    variant = 'default',
 }) => {
     const hasHeader = title || subtitle || action;
 
+    const variants: Record<NonNullable<CardProps["variant"]>, string> = {
+        default: "bg-white border border-slate-200 shadow-sm hover:shadow-md hover:scale-[1.01] hover:scale-[1.01]",
+        outlined: "bg-transparent border border-slate-200",
+        ghost: "bg-transparent border-0 shadow-none",
+    };
+
     return (
         <div
-            className={`bg-white rounded-xl border border-slate-200 shadow-sm transition-all duration-200 ${className}`}
+            className={cn(
+                "rounded-xl transition-all duration-200",
+                variants[variant],
+                className
+            )}
         >
             {hasHeader && (
                 <div className="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
