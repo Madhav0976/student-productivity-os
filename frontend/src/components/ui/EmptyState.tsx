@@ -1,11 +1,16 @@
 import React from "react";
 import { BookOpen, CheckSquare, Code2, Target, FileText, Briefcase, BarChart3, Calendar, Inbox } from "lucide-react";
+import { cn } from "../../utils/cn";
+import Button from "./Button";
+
+type ActionObj = { label: string; onClick: () => void };
 
 interface EmptyStateProps {
   type?: "tasks" | "notes" | "goals" | "coding" | "placements" | "study" | "analytics" | "calendar" | "inbox" | "search" | "generic";
   title?: string;
   description?: string;
-  action?: { label: string; onClick: () => void };
+  action?: React.ReactNode | ActionObj;
+  className?: string;
 }
 
 const CONFIGS = {
@@ -88,30 +93,37 @@ const CONFIGS = {
   },
 };
 
-export default function EmptyState({ type = "generic", title, description, action }: EmptyStateProps) {
+const isActionObj = (act: any): act is ActionObj => {
+  return typeof act === 'object' && act !== null && !React.isValidElement(act) && 'label' in act && 'onClick' in act;
+};
+
+export default function EmptyState({ type = "generic", title, description, action, className }: EmptyStateProps) {
   const config = CONFIGS[type];
   const Icon = config.icon;
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-4 text-center animate-fade-in">
+    <div className={cn("flex flex-col items-center justify-center py-16 px-4 text-center", className)}>
       {/* Illustration */}
-      <div className={`w-16 h-16 ${config.bg} rounded-2xl flex items-center justify-center mb-5 relative`}>
+      <div className={cn("w-16 h-16 rounded-2xl flex items-center justify-center mb-5 relative", config.bg)}>
         <Icon size={28} className={config.color} />
         {/* Decorative rings */}
-        <div className={`absolute inset-0 rounded-2xl border-2 ${config.bg} opacity-50 scale-125`} />
-        <div className={`absolute inset-0 rounded-2xl border ${config.bg} opacity-30 scale-150`} />
+        <div className={cn("absolute inset-0 rounded-2xl border-2 opacity-50 scale-125", config.bg)} />
+        <div className={cn("absolute inset-0 rounded-2xl border opacity-30 scale-150", config.bg)} />
       </div>
 
-      <h3 className="text-base font-semibold text-white mb-2">{title || config.title}</h3>
+      <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-2">{title || config.title}</h3>
       <p className="text-sm text-slate-500 max-w-xs mb-6 leading-relaxed">{description || config.desc}</p>
 
       {action && (
-        <button
-          onClick={action.onClick}
-          className="btn-brand btn-sm"
-        >
-          {action.label}
-        </button>
+        <div>
+          {isActionObj(action) ? (
+            <Button onClick={action.onClick}>
+              {action.label}
+            </Button>
+          ) : (
+            <>{action}</>
+          )}
+        </div>
       )}
     </div>
   );
