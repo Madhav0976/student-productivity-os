@@ -16,6 +16,7 @@ import StatCard from "../components/StatCard";
 import Button from "../components/ui/Button";
 import { useAsyncData } from "../hooks/useAsyncData";
 import { api } from "../services/api";
+import Card from "../components/ui/Card";
 
 
 export default function Dashboard() {
@@ -86,7 +87,7 @@ export default function Dashboard() {
 
           {/* Today's Focus */}
 
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <Card className="rounded-2xl border bg-white p-6 shadow-sm">
 
             <div className="flex items-center justify-between">
 
@@ -96,7 +97,7 @@ export default function Dashboard() {
 
               <ListTodo className="h-5 w-5 text-blue-600" />
 
-            </div>
+            </div >
 
             <div className="mt-6 space-y-4">
 
@@ -106,7 +107,7 @@ export default function Dashboard() {
 
                 <ArrowRight size={18} />
 
-              </div>
+              </div >
 
               <div className="flex items-center justify-between rounded-xl border p-4 hover:bg-slate-50">
 
@@ -126,11 +127,11 @@ export default function Dashboard() {
 
             </div>
 
-          </div>
+          </Card>
 
           {/* Study Progress */}
 
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <Card className="rounded-2xl border bg-white p-6 shadow-sm">
 
             <div className="flex items-center justify-between">
 
@@ -140,7 +141,7 @@ export default function Dashboard() {
 
               <BookOpen className="h-5 w-5 text-green-600" />
 
-            </div>
+            </div >
 
             <div className="mt-6">
 
@@ -156,7 +157,7 @@ export default function Dashboard() {
 
             </div>
 
-          </div>
+          </Card>
 
         </div>
 
@@ -166,7 +167,7 @@ export default function Dashboard() {
 
           {/* Streak */}
 
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <Card className="rounded-2xl border bg-white p-6 shadow-sm">
 
             <div className="flex items-center gap-3">
 
@@ -178,7 +179,7 @@ export default function Dashboard() {
 
               </h2>
 
-            </div>
+            </div >
 
             <div className="mt-5 text-4xl font-bold">
 
@@ -192,11 +193,11 @@ export default function Dashboard() {
 
             </p>
 
-          </div>
+          </Card>
 
           {/* Upcoming */}
 
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <Card className="rounded-2xl border bg-white p-6 shadow-sm">
 
             <div className="flex items-center gap-3">
 
@@ -220,11 +221,11 @@ export default function Dashboard() {
 
             </div>
 
-          </div>
+          </Card>
 
           {/* Quick Actions */}
 
-          <div className="rounded-2xl border bg-white p-6 shadow-sm">
+          <Card className="rounded-2xl border bg-white p-6 shadow-sm">
 
             <h2 className="font-semibold">
 
@@ -268,7 +269,7 @@ export default function Dashboard() {
 
             </div>
 
-          </div>
+          </Card>
 
         </div>
 
