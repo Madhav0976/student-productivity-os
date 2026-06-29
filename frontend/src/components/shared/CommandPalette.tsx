@@ -51,12 +51,12 @@ export default function CommandPalette() {
           <div className="flex items-center gap-3 px-4 border-b border-[var(--border)]">
             <Search size={16} className="text-slate-500 flex-shrink-0" />
             <Command.Input
-              className="cmdk-input flex-1 bg-transparent border-none outline-none text-white text-sm py-4 placeholder:text-slate-500"
+              className="cmdk-input flex-1 bg-transparent border-none outline-none text-slate-900 dark:text-white text-sm py-4 placeholder:text-slate-400 dark:placeholder:text-slate-500"
               placeholder="Search pages, create items, run actions..."
               autoFocus
             />
             <kbd
-              className="text-2xs text-slate-500 bg-white/5 border border-white/10 rounded px-2 py-1 cursor-pointer hover:bg-white/10"
+              className="text-2xs text-slate-500 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded px-2 py-1 cursor-pointer hover:bg-slate-200 dark:hover:bg-white/10"
               onClick={closeCommandPalette}
             >
               ESC
@@ -120,15 +120,15 @@ export default function CommandPalette() {
             </Command.Group>
           </Command.List>
 
-          <div className="px-4 py-2 border-t border-[var(--border)] flex items-center gap-4">
-            <span className="text-2xs text-slate-600 flex items-center gap-1">
-              <kbd className="text-2xs bg-white/5 border border-white/10 rounded px-1">↑↓</kbd> navigate
+          <div className="px-4 py-2 border-t border-[var(--border)] flex items-center gap-4 bg-slate-50 dark:bg-transparent rounded-b-xl">
+            <span className="text-2xs text-slate-500 flex items-center gap-1">
+              <kbd className="text-2xs bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded px-1 text-slate-600 dark:text-slate-400">↑↓</kbd> navigate
             </span>
-            <span className="text-2xs text-slate-600 flex items-center gap-1">
-              <kbd className="text-2xs bg-white/5 border border-white/10 rounded px-1">↵</kbd> select
+            <span className="text-2xs text-slate-500 flex items-center gap-1">
+              <kbd className="text-2xs bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded px-1 text-slate-600 dark:text-slate-400">↵</kbd> select
             </span>
-            <span className="text-2xs text-slate-600 flex items-center gap-1">
-              <kbd className="text-2xs bg-white/5 border border-white/10 rounded px-1">esc</kbd> close
+            <span className="text-2xs text-slate-500 flex items-center gap-1">
+              <kbd className="text-2xs bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded px-1 text-slate-600 dark:text-slate-400">esc</kbd> close
             </span>
           </div>
         </Command>

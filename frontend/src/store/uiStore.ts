@@ -24,9 +24,9 @@ const storedTheme = (localStorage.getItem("spo_theme") as Theme) || "dark";
 
 // Apply theme on load
 if (storedTheme === "dark") {
-  document.documentElement.classList.remove("light");
+  document.documentElement.classList.add("dark");
 } else {
-  document.documentElement.classList.add("light");
+  document.documentElement.classList.remove("dark");
 }
 
 export const useUIStore = create<UIState>((set, get) => ({
@@ -39,9 +39,9 @@ export const useUIStore = create<UIState>((set, get) => ({
   setTheme: (theme) => {
     localStorage.setItem("spo_theme", theme);
     if (theme === "dark") {
-      document.documentElement.classList.remove("light");
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
     }
     set({ theme });
   },

@@ -2,6 +2,9 @@ import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
+import { GraduationCap } from "lucide-react";
 
 const initialForm = {
   name: "",
@@ -33,24 +36,45 @@ export default function Register() {
   };
 
   return (
-    <main className="grid min-h-screen place-items-center bg-mist px-4 py-8 dark:bg-slate-950">
-      <form onSubmit={submit} className="panel w-full max-w-2xl">
-        <h1 className="text-2xl font-bold text-slate-950 dark:text-white">Create your workspace</h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Set up your student operating system.</p>
-        {error && <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <Input placeholder="Name" value={form.name} onChange={(e) => update("name", e.target.value)} required />
-          <Input type="email" placeholder="Email" value={form.email} onChange={(e) => update("email", e.target.value)} required />
-          <Input type="password" placeholder="Password" value={form.password} onChange={(e) => update("password", e.target.value)} required />
-          <Input placeholder="College" value={form.college} onChange={(e) => update("college", e.target.value)} required />
-          <Input placeholder="Branch" value={form.branch} onChange={(e) => update("branch", e.target.value)} required />
-          <Input type="number" placeholder="Graduation Year" value={form.graduationYear} onChange={(e) => update("graduationYear", Number(e.target.value))} required />
+    <main className="grid min-h-screen place-items-center bg-[var(--bg)] px-4 py-8">
+      <div className="w-full max-w-2xl animate-fade-in">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-12 h-12 gradient-brand rounded-xl flex items-center justify-center shadow-glow mb-4">
+            <GraduationCap size={24} className="text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white text-center tracking-tight">Create your workspace</h1>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 text-center">Set up your student operating system.</p>
         </div>
-        <button className="btn-primary mt-6 w-full" disabled={isLoading}>{isLoading ? "Creating..." : "Register"}</button>
-        <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
-          Already registered? <Link className="font-semibold text-brand" to="/login">Login</Link>
+
+        <Card className="!bg-white dark:!bg-slate-900/50 dark:!border-slate-800">
+          <form onSubmit={submit} className="space-y-6">
+            {error && (
+              <div className="rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 p-3 text-sm text-red-600 dark:text-red-400">
+                {error}
+              </div>
+            )}
+            
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Input label="Full Name" placeholder="John Doe" value={form.name} onChange={(e) => update("name", e.target.value)} required />
+              <Input label="Email" type="email" placeholder="name@university.edu" value={form.email} onChange={(e) => update("email", e.target.value)} required />
+              <Input label="Password" type="password" placeholder="••••••••" value={form.password} onChange={(e) => update("password", e.target.value)} required />
+              <Input label="College / University" placeholder="Stanford University" value={form.college} onChange={(e) => update("college", e.target.value)} required />
+              <Input label="Branch / Major" placeholder="Computer Science" value={form.branch} onChange={(e) => update("branch", e.target.value)} required />
+              <Input label="Graduation Year" type="number" placeholder="2028" value={form.graduationYear} onChange={(e) => update("graduationYear", Number(e.target.value))} required />
+            </div>
+            
+            <div className="pt-2">
+              <Button type="submit" variant="primary" className="w-full" loading={isLoading}>
+                Create Account
+              </Button>
+            </div>
+          </form>
+        </Card>
+
+        <p className="mt-6 text-sm text-slate-500 dark:text-slate-400 text-center">
+          Already registered? <Link className="font-semibold text-brand-500 hover:text-brand-400 transition-colors" to="/login">Login</Link>
         </p>
-      </form>
+      </div>
     </main>
   );
 }

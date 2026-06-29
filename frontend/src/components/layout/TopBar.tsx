@@ -12,15 +12,15 @@ export default function TopBar() {
       {/* Search trigger */}
       <button
         onClick={openCommandPalette}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-[var(--border)] 
-                   text-slate-400 text-sm hover:text-white hover:border-slate-600 transition-all duration-150 group"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 
+                   text-slate-500 text-sm hover:text-slate-900 hover:border-slate-300 dark:bg-white/5 dark:border-[var(--border)] dark:text-slate-400 dark:hover:text-white dark:hover:border-slate-600 transition-all duration-150 group"
         id="topbar-search"
         aria-label="Open command palette"
       >
-        <Search size={14} className="group-hover:text-white" />
+        <Search size={14} className="group-hover:text-slate-900 dark:group-hover:text-white" />
         <span className="hidden sm:inline text-xs">Search anything...</span>
         <div className="hidden sm:flex items-center gap-0.5 ml-2">
-          <kbd className="text-2xs bg-white/10 border border-white/10 rounded px-1 py-0.5 flex items-center gap-0.5">
+          <kbd className="text-2xs bg-slate-100 dark:bg-white/10 border border-slate-200 dark:border-white/10 rounded px-1 py-0.5 flex items-center gap-0.5">
             <Command size={8} />K
           </kbd>
         </div>

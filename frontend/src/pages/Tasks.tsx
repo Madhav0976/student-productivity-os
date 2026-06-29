@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import {
   Plus, Search, Filter, CheckSquare, Calendar, Flag, Trash2,
   ChevronDown, SortAsc, X, Circle, CheckCircle2, Edit3,
-  AlarmClock, Tag, MoreHorizontal, Archive
+  AlarmClock, Tag, MoreHorizontal, Archive, AlignLeft
 } from "lucide-react";
 import { useTaskStore } from "../store/taskStore";
 import { useUIStore } from "../store/uiStore";
@@ -10,6 +10,8 @@ import { Task, Priority } from "../types";
 import Drawer from "../components/shared/Drawer";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonRow } from "../components/ui/Skeleton";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
 import { formatDateShort, isOverdue } from "../utils/dates";
 import toast from "react-hot-toast";
 import { isToday, isTomorrow, isPast, parseISO, isThisWeek } from "date-fns";
@@ -131,71 +133,136 @@ function TaskDetailDrawer({ task, onClose, onUpdate, onDelete }: {
       </div>
 
       {/* Footer */}
-      <div slot="footer" className="flex items-center justify-between gap-2 flex-wrap">
-        <button onClick={remove} className="btn-danger btn-sm">
-          <Trash2 size={13} /> Delete
+      <div slot="footer" className="flex items-center justify-between gap-2 flex-wrap pt-2">
+        <button onClick={remove} className="btn-icon btn-ghost text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-500/10">
+          <Trash2 size={16} /> 
         </button>
         <div className="flex items-center gap-2">
-          <button onClick={onClose} className="btn-outline btn-sm">Cancel</button>
-          <button onClick={save} disabled={saving} className="btn-brand btn-sm">
+          <Button variant="ghost" size="sm" onClick={onClose} className="text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">Cancel</Button>
+          <Button variant="primary" size="sm" onClick={save} disabled={saving}>
             {saving ? "Saving..." : "Save changes"}
-          </button>
+          </Button>
         </div>
       </div>
     </Drawer>
   );
 }
 
-function AddTaskRow({ onAdd }: { onAdd: (title: string) => Promise<void> }) {
+function AddTaskRow({ onAdd }: { onAdd: (task: Partial<Task>) => Promise<void> }) {
   const [active, setActive] = useState(false);
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<Priority>("Medium");
   const [dueDate, setDueDate] = useState("");
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const resetForm = () => {
+    setTitle("");
+    setDescription("");
+    setPriority("Medium");
+    setDueDate("");
+    setShowAdvanced(false);
+    setActive(false);
+  };
 
   const submit = async () => {
     if (!title.trim()) return;
-    await onAdd(title);
-    setTitle("");
-    setActive(false);
+    await onAdd({ 
+      title: title.trim(), 
+      description: description.trim(), 
+      priority, 
+      dueDate: dueDate || new Date().toISOString() 
+    });
+    resetForm();
   };
 
   if (!active) {
     return (
       <button
         onClick={() => setActive(true)}
-        className="w-full flex items-center gap-3 px-4 py-2.5 text-slate-500 hover:text-slate-300 
-                   hover:bg-white/5 transition-all duration-150 text-sm group"
+        className="w-full flex items-center gap-3 px-4 py-3.5 text-slate-500 hover:text-slate-700 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 
+                   dark:hover:bg-white/5 transition-all duration-200 text-sm group border-b border-[var(--border)]"
         id="tasks-add-new"
       >
-        <Plus size={14} className="text-brand-500 group-hover:text-brand-400" />
-        Add task
+        <Plus size={16} className="text-brand-500 dark:text-brand-400 transition-colors" />
+        <span className="font-medium">Add task</span>
       </button>
     );
   }
 
   return (
-    <div className="px-4 py-3 border border-brand-600/30 rounded-lg mx-3 mb-2 bg-brand-600/5 animate-slide-in-up">
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Task name"
-        className="inp mb-2 text-sm"
-        autoFocus
-        onKeyDown={(e) => {
-          if (e.key === "Enter") submit();
-          if (e.key === "Escape") setActive(false);
-        }}
-      />
-      <div className="flex items-center gap-2 flex-wrap">
-        <select value={priority} onChange={(e) => setPriority(e.target.value as Priority)} className="inp !py-1 text-xs w-auto">
-          <option value="High">High</option>
-          <option value="Medium">Medium</option>
-          <option value="Low">Low</option>
-        </select>
-        <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} className="inp !py-1 text-xs w-auto" />
-        <div className="flex-1" />
-        <button onClick={() => setActive(false)} className="btn-ghost btn-sm"><X size={13} /></button>
-        <button onClick={submit} disabled={!title.trim()} className="btn-brand btn-sm">Add</button>
+    <div className="p-4 border-b border-[var(--border)] bg-slate-50/50 dark:bg-slate-900/40 animate-fade-in">
+      <div className="flex flex-col gap-3">
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Task name"
+          className="bg-transparent border-none outline-none text-base text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 w-full font-medium focus:ring-0 p-0"
+          autoFocus
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              submit();
+            }
+            if (e.key === "Escape") resetForm();
+          }}
+        />
+
+        {showAdvanced && (
+          <div className="flex flex-col gap-3 animate-fade-in mt-1">
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Description"
+              className="bg-transparent border-none outline-none text-sm text-slate-300 placeholder:text-slate-500 w-full resize-none min-h-[60px] focus:ring-0 p-0"
+              onKeyDown={(e) => {
+                if (e.key === "Escape") resetForm();
+              }}
+            />
+          </div>
+        )}
+
+        <div className="flex items-center justify-between mt-3 flex-wrap gap-3">
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setShowAdvanced(!showAdvanced)} 
+              className={`btn-ghost btn-sm text-xs flex items-center gap-1.5 px-2 py-1.5 rounded-lg transition-colors ${
+                showAdvanced ? 'text-brand-400 bg-brand-500/10' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <AlignLeft size={14} /> Description
+            </button>
+            <div className="flex items-center gap-1.5 bg-black/20 rounded-lg p-1 border border-white/5">
+              <Flag size={14} className={
+                priority === 'High' ? 'text-red-400' : 
+                priority === 'Medium' ? 'text-amber-400' : 'text-emerald-400'
+              } />
+              <select 
+                value={priority} 
+                onChange={(e) => setPriority(e.target.value as Priority)} 
+                className="bg-transparent border-none text-xs text-slate-600 dark:text-slate-300 outline-none focus:ring-0 py-0.5 pl-0 pr-6 cursor-pointer appearance-none"
+              >
+                <option value="High" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">High</option>
+                <option value="Medium" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Medium</option>
+                <option value="Low" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Low</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-1.5 bg-white dark:bg-black/20 rounded-lg p-1 border border-slate-200 dark:border-white/5 px-2">
+              <Calendar size={14} className="text-slate-500 dark:text-slate-400" />
+              <input 
+                type="date" 
+                value={dueDate} 
+                onChange={(e) => setDueDate(e.target.value)} 
+                className="bg-transparent border-none text-xs text-slate-600 dark:text-slate-300 outline-none focus:ring-0 py-0.5 p-0 cursor-pointer" 
+              />
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={resetForm} className="text-slate-400 hover:text-white">Cancel</Button>
+            <Button variant="primary" size="sm" onClick={submit} disabled={!title.trim()}>Add Task</Button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -233,13 +300,13 @@ export default function Tasks() {
     });
   }, [tasks, filter, debouncedSearch]);
 
-  const handleAdd = async (title: string) => {
+  const handleAdd = async (taskData: Partial<Task>) => {
     await create({
-      title,
-      priority: "Medium",
-      dueDate: new Date().toISOString(),
+      title: taskData.title || "",
+      priority: taskData.priority || "Medium",
+      dueDate: taskData.dueDate || new Date().toISOString(),
       status: "Pending",
-      description: "",
+      description: taskData.description || "",
     });
     toast.success("Task added!");
   };
@@ -257,15 +324,15 @@ export default function Tasks() {
 
           <div>
 
-            <p className="text-xs uppercase tracking-[0.25em] text-blue-400 font-semibold">
+            <p className="text-xs uppercase tracking-[0.25em] text-brand-500 font-semibold">
               Workspace
             </p>
 
-            <h1 className="text-4xl font-bold text-white mt-2">
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mt-2">
               Tasks
             </h1>
 
-            <p className="text-slate-400 mt-2 max-w-xl">
+            <p className="text-slate-500 dark:text-slate-400 mt-2 max-w-xl">
               Organize assignments, placement preparation,
               coding practice and personal goals from one place.
             </p>
@@ -283,69 +350,41 @@ export default function Tasks() {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-          <div className="card p-4">
-            <p className="text-xs text-slate-500 uppercase">
+          <Card className="p-4 dark:!bg-slate-900/50 dark:!border-slate-800">
+            <p className="text-xs text-slate-500 uppercase font-medium tracking-wider">
               Total
             </p>
-
-            <h2 className="text-2xl font-bold mt-2">
+            <h2 className="text-2xl font-bold mt-2 text-slate-900 dark:text-white">
               {total}
             </h2>
-          </div>
+          </Card>
 
-          <div className="card p-4">
-
-            <p className="text-xs text-slate-500 uppercase">
+          <Card className="p-4 dark:!bg-slate-900/50 dark:!border-slate-800">
+            <p className="text-xs text-slate-500 uppercase font-medium tracking-wider">
               Completed
             </p>
-
-            <h2 className="text-2xl font-bold mt-2 text-green-400">
+            <h2 className="text-2xl font-bold mt-2 text-emerald-500 dark:text-emerald-400">
               {completed}
             </h2>
+          </Card>
 
-          </div>
-
-          <div className="card p-4">
-
-            <p className="text-xs text-slate-500 uppercase">
+          <Card className="p-4 dark:!bg-slate-900/50 dark:!border-slate-800">
+            <p className="text-xs text-slate-500 uppercase font-medium tracking-wider">
               Due Today
             </p>
-
-            <h2 className="text-2xl font-bold mt-2 text-orange-400">
-
-              {
-                tasks.filter(
-                  t =>
-                    isToday(parseISO(t.dueDate)) &&
-                    t.status !== "Completed"
-                ).length
-              }
-
+            <h2 className="text-2xl font-bold mt-2 text-amber-500 dark:text-amber-400">
+              {tasks.filter(t => isToday(parseISO(t.dueDate)) && t.status !== "Completed").length}
             </h2>
+          </Card>
 
-          </div>
-
-          <div className="card p-4">
-
-            <p className="text-xs text-slate-500 uppercase">
+          <Card className="p-4 dark:!bg-slate-900/50 dark:!border-slate-800">
+            <p className="text-xs text-slate-500 uppercase font-medium tracking-wider">
               High Priority
             </p>
-
-            <h2 className="text-2xl font-bold mt-2 text-red-400">
-
-              {
-                tasks.filter(
-                  t =>
-                    t.priority === "High" &&
-                    t.status !== "Completed"
-                ).length
-              }
-
+            <h2 className="text-2xl font-bold mt-2 text-red-500 dark:text-red-400">
+              {tasks.filter(t => t.priority === "High" && t.status !== "Completed").length}
             </h2>
-
-          </div>
-
+          </Card>
         </div>
 
       </div>
@@ -376,8 +415,8 @@ export default function Tasks() {
               key={key}
               onClick={() => setFilter(key)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 ${filter === key
-                  ? "bg-brand-600/15 border border-brand-600/30 text-white"
-                  : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
+                  ? "bg-brand/10 border border-brand/20 text-brand-600 dark:bg-brand-600/15 dark:border-brand-600/30 dark:text-white"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-white/5"
                 }`}
             >
               {label}
@@ -393,16 +432,16 @@ export default function Tasks() {
 
       {/* Progress bar */}
       {total > 0 && (
-        <div className="h-1 bg-white/5 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden">
           <div
-            className="h-full gradient-brand rounded-full transition-all duration-700"
+            className="h-full bg-brand-500 rounded-full transition-all duration-700"
             style={{ width: `${(completed / total) * 100}%` }}
           />
         </div>
       )}
 
       {/* Task list */}
-      <div className="card overflow-hidden">
+      <Card className="p-0 overflow-hidden dark:!bg-slate-900/50 dark:!border-slate-800">
         {/* Add task inline */}
         <AddTaskRow onAdd={handleAdd} />
 
@@ -418,7 +457,7 @@ export default function Tasks() {
             filteredTasks.map((task) => (
               <div
                 key={task._id}
-                className="task-row flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 transition-all duration-150 group cursor-pointer"
+                className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-150 group cursor-pointer border-b last:border-b-0 border-[var(--border)]"
                 onClick={() => setSelectedTask(task)}
               >
                 {/* Checkbox */}
@@ -435,7 +474,7 @@ export default function Tasks() {
                 </button>
 
                 {/* Title */}
-                <span className={`flex-1 text-sm truncate ${task.status === "Completed" ? "line-through text-slate-500" : "text-slate-200"
+                <span className={`flex-1 text-sm truncate transition-colors ${task.status === "Completed" ? "line-through text-slate-400 dark:text-slate-500" : "text-slate-900 dark:text-slate-200"
                   }`}>
                   {task.title}
                 </span>
@@ -467,7 +506,7 @@ export default function Tasks() {
             ))
           )}
         </div>
-      </div>
+      </Card>
 
       {/* Task drawer */}
       {selectedTask && (

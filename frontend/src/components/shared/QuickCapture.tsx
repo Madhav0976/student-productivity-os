@@ -98,15 +98,15 @@ export default function QuickCapture() {
   return (
     <div className="modal-overlay" onClick={closeQuickCapture} role="dialog" aria-modal aria-label="Quick capture">
       <div className="w-full max-w-lg animate-scale-in" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-panel p-0 overflow-hidden">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
-            <div className="flex items-center gap-2">
-              <Zap size={16} className="text-brand-400" />
-              <span className="text-sm font-semibold text-white">Quick Capture</span>
-              <kbd className="text-2xs text-slate-500 bg-white/5 border border-white/10 rounded px-1.5">Q</kbd>
-            </div>
-            <button onClick={closeQuickCapture} className="btn-icon btn-ghost" aria-label="Close">
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl p-0 overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--border)]">
+              <div className="flex items-center gap-2">
+                <Zap size={16} className="text-brand-500" />
+                <span className="text-sm font-semibold text-slate-900 dark:text-white">Quick Capture</span>
+                <kbd className="text-2xs text-slate-500 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded px-1.5">Q</kbd>
+              </div>
+              <button onClick={closeQuickCapture} className="btn-icon btn-ghost" aria-label="Close">
               <X size={16} />
             </button>
           </div>
@@ -119,8 +119,8 @@ export default function QuickCapture() {
                 onClick={() => setActiveType(key)}
                 className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-150
                   ${activeType === key
-                    ? "bg-brand-600/15 border border-brand-600/30 text-white"
-                    : "text-slate-500 hover:text-slate-300 hover:bg-white/5"
+                    ? "bg-brand/10 border border-brand/20 text-brand-600 dark:bg-brand-600/15 dark:border-brand-600/30 dark:text-white"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-white/5"
                   }`}
               >
                 <Icon size={12} className={activeType === key ? color : ""} />
@@ -169,15 +169,15 @@ export default function QuickCapture() {
             )}
 
             <div className="flex items-center justify-between pt-1">
-              <p className="text-2xs text-slate-600">
-                Press <kbd className="text-2xs bg-white/5 border border-white/10 rounded px-1">↵</kbd> to save
+              <p className="text-2xs text-slate-500 dark:text-slate-600">
+                Press <kbd className="text-2xs bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded px-1">↵</kbd> to save
               </p>
               <div className="flex items-center gap-2">
-                <button type="button" onClick={closeQuickCapture} className="btn-outline btn-sm">Cancel</button>
+                <button type="button" onClick={closeQuickCapture} className="btn-secondary btn-sm">Cancel</button>
                 <button
                   type="submit"
                   disabled={!title.trim() || loading}
-                  className="btn-brand btn-sm"
+                  className="btn-primary btn-sm"
                 >
                   {loading ? "Saving..." : "Save"}
                 </button>

@@ -15,13 +15,13 @@ const variantClasses: Record<Variant, string> = {
         "bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-600",
 
     secondary:
-        "bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200",
+        "bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-white dark:border-slate-700",
 
     outline:
-        "bg-transparent border border-slate-300 hover:bg-slate-100 text-slate-900",
+        "bg-transparent border border-slate-300 hover:bg-slate-100 text-slate-900 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800",
 
     ghost:
-        "bg-transparent hover:bg-slate-100 text-slate-700",
+        "bg-transparent hover:bg-slate-100 text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white",
 
     danger:
         "bg-red-600 hover:bg-red-700 text-white border border-red-600",

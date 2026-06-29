@@ -40,6 +40,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const data = await api.login({ email, password });
       api.setToken(data.token);
+      localStorage.setItem("spo_token", data.token);
       localStorage.setItem("spo_user", JSON.stringify(data.user));
       set({ user: data.user, token: data.token, status: "authenticated", isLoading: false });
     } catch (error) {
@@ -52,6 +53,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const data = await api.register(payload);
       api.setToken(data.token);
+      localStorage.setItem("spo_token", data.token);
       localStorage.setItem("spo_user", JSON.stringify(data.user));
       set({ user: data.user, token: data.token, status: "authenticated", isLoading: false });
     } catch (error) {

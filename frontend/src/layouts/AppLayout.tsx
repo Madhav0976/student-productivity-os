@@ -53,10 +53,9 @@ export default function AppLayout() {
       <Toaster
         position="bottom-right"
         toastOptions={{
+          className: "bg-white text-slate-900 border-slate-200 dark:bg-slate-900 dark:text-slate-100 dark:border-slate-800",
           style: {
-            background: "#12121A",
-            color: "#F1F5F9",
-            border: "1px solid #1E1E2E",
+            border: "1px solid var(--border)",
             borderRadius: "10px",
             fontSize: "13px",
             padding: "10px 14px",

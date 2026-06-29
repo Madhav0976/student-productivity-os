@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import {
   Home, Inbox, CheckSquare, BookOpen, Target, Code2,
   Briefcase, FileText, Calendar, BarChart3, User, Settings,
-  Archive, ChevronLeft, Zap, GraduationCap
+  Archive, ChevronLeft, Zap, GraduationCap, LogOut
 } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 import { useUIStore } from "../../store/uiStore";
@@ -30,6 +30,7 @@ const BOTTOM_ITEMS = [
 export default function Sidebar() {
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
   const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
 
   return (
@@ -44,7 +45,7 @@ export default function Sidebar() {
         </div>
         {!sidebarCollapsed && (
           <div className="animate-fade-in overflow-hidden">
-            <p className="text-sm font-bold text-white leading-tight truncate">AcademOS</p>
+            <p className="text-sm font-bold text-slate-900 dark:text-white leading-tight truncate">AcademOS</p>
             <p className="text-2xs text-slate-500 truncate">{user?.college || "Student"}</p>
           </div>
         )}
@@ -64,12 +65,12 @@ export default function Sidebar() {
         <div className="px-3 py-2">
           <button
             onClick={() => useUIStore.getState().openQuickCapture()}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-brand-600/10 border border-brand-600/20 
-                       text-slate-400 text-xs hover:text-white hover:bg-brand-600/15 transition-all duration-150"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg bg-brand/5 border border-brand/10 
+                       text-slate-500 text-xs hover:text-slate-900 hover:bg-brand/10 dark:text-slate-400 dark:hover:text-white dark:bg-brand-600/10 dark:border-brand-600/20 dark:hover:bg-brand-600/15 transition-all duration-150"
           >
-            <Zap size={12} className="text-brand-400" />
+            <Zap size={12} className="text-brand-500 dark:text-brand-400" />
             <span>Quick capture</span>
-            <kbd className="ml-auto text-2xs bg-white/5 border border-white/10 rounded px-1 py-0.5">Q</kbd>
+            <kbd className="ml-auto text-2xs bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded px-1 py-0.5">Q</kbd>
           </button>
         </div>
       )}
@@ -114,13 +115,24 @@ export default function Sidebar() {
               {!sidebarCollapsed && <span className="truncate">{label}</span>}
             </NavLink>
           ))}
+          <button
+            onClick={() => {
+              logout();
+              navigate("/login");
+            }}
+            className={`nav-item !text-red-500 hover:!bg-red-50 dark:!text-red-400 dark:hover:!bg-red-500/10 w-full text-left ${sidebarCollapsed ? "justify-center" : ""}`}
+            title={sidebarCollapsed ? "Logout" : undefined}
+          >
+            <LogOut size={16} className="flex-shrink-0" />
+            {!sidebarCollapsed && <span className="truncate">Logout</span>}
+          </button>
         </div>
       </nav>
 
       {/* User footer */}
       {!sidebarCollapsed && user && (
         <div
-          className="p-3 border-t border-[var(--border)] cursor-pointer hover:bg-white/5 transition-all"
+          className="p-3 border-t border-[var(--border)] cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 transition-all"
           onClick={() => navigate("/profile")}
         >
           <div className="flex items-center gap-3">
@@ -128,7 +140,7 @@ export default function Sidebar() {
               {user.name?.[0]?.toUpperCase()}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium text-white truncate">{user.name}</p>
+              <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{user.name}</p>
               <p className="text-2xs text-slate-500 truncate">{user.email}</p>
             </div>
           </div>

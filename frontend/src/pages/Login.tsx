@@ -2,6 +2,9 @@ import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
+import { GraduationCap } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -23,31 +26,54 @@ export default function Login() {
   };
 
   return (
-    <main className="grid min-h-screen place-items-center bg-mist px-4 dark:bg-slate-950">
-      <form onSubmit={submit} className="panel w-full max-w-md">
-        <h1 className="text-2xl font-bold text-slate-950 dark:text-white">Student Productivity OS</h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Sign in to plan, track, and ship your semester.</p>
-        {error && <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-        <div className="mt-6 space-y-4">
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button className="btn-primary w-full" disabled={isLoading}>{isLoading ? "Signing in..." : "Login"}</button>
+    <main className="grid min-h-screen place-items-center bg-[var(--bg)] px-4">
+      <div className="w-full max-w-md animate-fade-in">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-12 h-12 gradient-brand rounded-xl flex items-center justify-center shadow-glow mb-4">
+            <GraduationCap size={24} className="text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white text-center tracking-tight">Welcome back</h1>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 text-center">Sign in to AcademOS to continue your journey.</p>
         </div>
-        <p className="mt-4 text-sm text-slate-500 dark:text-slate-400">
-          New here? <Link className="font-semibold text-brand" to="/register">Create an account</Link>
+
+        <Card className="!bg-white dark:!bg-slate-900/50 dark:!border-slate-800">
+          <form onSubmit={submit} className="space-y-4">
+            {error && (
+              <div className="rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 p-3 text-sm text-red-600 dark:text-red-400">
+                {error}
+              </div>
+            )}
+            
+            <Input
+              type="email"
+              label="Email"
+              placeholder="name@university.edu"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+
+            <Input
+              type="password"
+              label="Password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            
+            <div className="pt-2">
+              <Button type="submit" variant="primary" className="w-full" loading={isLoading}>
+                Sign In
+              </Button>
+            </div>
+          </form>
+        </Card>
+
+        <p className="mt-6 text-sm text-slate-500 dark:text-slate-400 text-center">
+          New here? <Link className="font-semibold text-brand-500 hover:text-brand-400 transition-colors" to="/register">Create an account</Link>
         </p>
-      </form>
+      </div>
     </main>
   );
 }

@@ -20,7 +20,7 @@ export default function MobileNav() {
           end={exact}
           className={({ isActive }) =>
             `flex flex-col items-center gap-0.5 px-4 py-1 transition-all duration-150 ${
-              isActive ? "text-brand-400" : "text-slate-500 hover:text-slate-300"
+              isActive ? "text-brand-500 dark:text-brand-400" : "text-slate-500 hover:text-slate-900 dark:text-slate-500 dark:hover:text-slate-300"
             }`
           }
         >

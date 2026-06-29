@@ -82,7 +82,7 @@ export default function Home() {
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <p className="text-slate-500 text-sm font-medium">{getDayName()}, {getFullDate()}</p>
-          <h1 className="text-2xl font-bold text-white mt-0.5">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
             {getGreeting()}, {user?.name?.split(" ")[0]} 👋
           </h1>
           <p className="text-slate-400 text-sm mt-1">
@@ -98,7 +98,7 @@ export default function Home() {
           <ProgressRing progress={productivityScore} size={56} strokeWidth={5} showPercent />
           <div>
             <p className="text-2xs text-slate-500 font-medium">TODAY'S SCORE</p>
-            <p className="text-sm font-bold text-white mt-0.5">
+            <p className="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
               {productivityScore < 40 ? "Getting started" : productivityScore < 70 ? "Good progress" : "On fire! 🔥"}
             </p>
           </div>
@@ -119,16 +119,16 @@ export default function Home() {
             <button
               key={label}
               onClick={openQuickCapture}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 
-                         border border-[var(--border)] hover:border-slate-600 text-xs text-slate-400 
-                         hover:text-white transition-all duration-150"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 dark:bg-white/5 dark:hover:bg-white/10 
+                         border border-slate-200 dark:border-[var(--border)] hover:border-slate-300 dark:hover:border-slate-600 text-xs text-slate-500 dark:text-slate-400 
+                         hover:text-slate-900 dark:hover:text-white transition-all duration-150"
             >
               <Icon size={12} className={color} />
               {label}
             </button>
           ))}
           <div className="flex-1 hidden sm:flex justify-end">
-            <kbd className="text-2xs text-slate-600 bg-white/5 border border-white/10 rounded px-2 py-1">
+            <kbd className="text-2xs text-slate-400 dark:text-slate-600 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded px-2 py-1">
               Q — Quick capture
             </kbd>
           </div>
@@ -186,9 +186,9 @@ export default function Home() {
             <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-[var(--border)]">
               <div className="flex items-center gap-2">
                 <CheckSquare size={15} className="text-blue-400" />
-                <h2 className="text-sm font-semibold text-white">Today's Tasks</h2>
+                <h2 className="text-sm font-semibold text-slate-900 dark:text-white">Today's Tasks</h2>
                 {todayTasks.length > 0 && (
-                  <span className="badge bg-white/5 text-slate-400">{todayTasks.length}</span>
+                  <span className="badge bg-slate-100 text-slate-500 dark:bg-white/5 dark:text-slate-400">{todayTasks.length}</span>
                 )}
               </div>
               <button onClick={() => navigate("/tasks")} className="text-2xs text-slate-500 hover:text-brand-400 flex items-center gap-1 transition-colors">
@@ -218,7 +218,7 @@ export default function Home() {
                     >
                       {task.status === "Completed" && <span className="text-white text-2xs">✓</span>}
                     </div>
-                    <span className={`flex-1 text-sm truncate ${task.status === "Completed" ? "line-through text-slate-500" : "text-slate-200"}`}>
+                    <span className={`flex-1 text-sm truncate transition-colors ${task.status === "Completed" ? "line-through text-slate-400 dark:text-slate-500" : "text-slate-900 dark:text-slate-200"}`}>
                       {task.title}
                     </span>
                     <span className={`text-2xs flex-shrink-0 ${isOverdue(task.dueDate) && task.status !== "Completed" ? "text-red-400" : "text-slate-500"}`}>
@@ -242,7 +242,7 @@ export default function Home() {
             <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-[var(--border)]">
               <div className="flex items-center gap-2">
                 <Target size={15} className="text-purple-400" />
-                <h2 className="text-sm font-semibold text-white">Goal Progress</h2>
+                <h2 className="text-sm font-semibold text-slate-900 dark:text-white">Goal Progress</h2>
               </div>
               <button onClick={() => navigate("/goals")} className="text-2xs text-slate-500 hover:text-brand-400 flex items-center gap-1 transition-colors">
                 View all <ArrowRight size={11} />
@@ -261,10 +261,10 @@ export default function Home() {
                 {activeGoals.slice(0, 3).map((goal) => (
                   <div key={goal._id} className="space-y-1.5 cursor-pointer group" onClick={() => navigate("/goals")}>
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm text-slate-200 truncate group-hover:text-white transition-colors">{goal.goalName}</span>
+                      <span className="text-sm text-slate-900 dark:text-slate-200 truncate group-hover:text-brand-600 dark:group-hover:text-white transition-colors">{goal.goalName}</span>
                       <span className="text-2xs text-slate-500 flex-shrink-0">{goal.progressPercentage}%</span>
                     </div>
-                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden">
                       <div
                         className="h-full gradient-brand rounded-full transition-all duration-700"
                         style={{ width: `${goal.progressPercentage}%` }}
@@ -280,14 +280,14 @@ export default function Home() {
         {/* Right col */}
         <div className="space-y-4">
           {/* AI Insight */}
-          <div className="card p-4 bg-gradient-to-br from-brand-600/10 to-accent-500/5 border-brand-600/20">
+          <div className="card p-4 bg-gradient-to-br from-brand-600/10 to-teal-500/5 border-brand-600/20">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-6 h-6 gradient-brand rounded-lg flex items-center justify-center">
                 <Zap size={12} className="text-white" />
               </div>
               <span className="text-xs font-semibold text-brand-300">AI Insight</span>
             </div>
-            <p className="text-sm text-slate-300 leading-relaxed">
+            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
               <span className="mr-1.5">{insight.icon}</span>
               {insight.text}
             </p>
@@ -298,7 +298,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Briefcase size={14} className="text-pink-400" />
-                <h3 className="text-sm font-semibold text-white">Placement Pipeline</h3>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Placement Pipeline</h3>
               </div>
               <button onClick={() => navigate("/placements")} className="text-2xs text-slate-500 hover:text-brand-400 transition-colors">
                 <ArrowRight size={12} />
@@ -314,17 +314,17 @@ export default function Home() {
                   return (
                     <div key={stage} className="flex items-center gap-2">
                       <span className="text-2xs text-slate-500 w-16 flex-shrink-0">{stage}</span>
-                      <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div className="flex-1 h-1.5 bg-slate-200 dark:bg-white/5 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all duration-500 ${
                             stage === "Offer" ? "bg-emerald-500" 
                             : stage === "Interview" ? "bg-amber-500"
-                            : "bg-brand-600"
+                            : "bg-brand-500"
                           }`}
                           style={{ width: count > 0 ? `${Math.min(100, count * 20)}%` : "0%" }}
                         />
                       </div>
-                      <span className="text-2xs text-white font-medium w-4 text-right">{count}</span>
+                      <span className="text-2xs text-slate-900 dark:text-white font-medium w-4 text-right">{count}</span>
                     </div>
                   );
                 })}
@@ -337,28 +337,28 @@ export default function Home() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <Code2 size={14} className="text-amber-400" />
-                <h3 className="text-sm font-semibold text-white">Coding</h3>
+                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">Coding</h3>
               </div>
               <button onClick={() => navigate("/coding")} className="text-2xs text-slate-500 hover:text-brand-400 transition-colors">
                 <ArrowRight size={12} />
               </button>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white/5 rounded-lg p-3 text-center">
+              <div className="bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-lg p-3 text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <Flame size={12} className="text-orange-400" />
                   <span className="text-2xs text-slate-500">Streak</span>
                 </div>
-                <p className="text-xl font-bold text-white">{streak}</p>
-                <p className="text-2xs text-slate-600 mt-0.5">days</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{streak}</p>
+                <p className="text-2xs text-slate-500 dark:text-slate-600 mt-0.5">days</p>
               </div>
-              <div className="bg-white/5 rounded-lg p-3 text-center">
+              <div className="bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-lg p-3 text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <CheckSquare size={12} className="text-blue-400" />
                   <span className="text-2xs text-slate-500">Total</span>
                 </div>
-                <p className="text-xl font-bold text-white">{codingStore.problems.length}</p>
-                <p className="text-2xs text-slate-600 mt-0.5">solved</p>
+                <p className="text-xl font-bold text-slate-900 dark:text-white">{codingStore.problems.length}</p>
+                <p className="text-2xs text-slate-500 dark:text-slate-600 mt-0.5">solved</p>
               </div>
             </div>
           </div>
@@ -375,11 +375,11 @@ export default function Home() {
                 <button
                   key={to}
                   onClick={() => navigate(to)}
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-all text-left group"
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 transition-all text-left group"
                 >
                   <Icon size={14} className={color} />
-                  <span className="text-sm text-slate-400 group-hover:text-white transition-colors">{label}</span>
-                  <ArrowRight size={12} className="ml-auto text-slate-600 group-hover:text-slate-400 transition-colors" />
+                  <span className="text-sm text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">{label}</span>
+                  <ArrowRight size={12} className="ml-auto text-slate-400 dark:text-slate-600 group-hover:text-brand-500 dark:group-hover:text-slate-400 transition-colors" />
                 </button>
               ))}
             </div>

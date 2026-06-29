@@ -13,6 +13,10 @@ import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Study from "./pages/Study";
 import Tasks from "./pages/Tasks";
+import Inbox from "./pages/Inbox";
+import Calendar from "./pages/Calendar";
+import Archive from "./pages/Archive";
+import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./index.css";
 
@@ -33,6 +37,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <Route path="/goals" element={<Goals />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/inbox" element={<Inbox />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/archive" element={<Archive />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />

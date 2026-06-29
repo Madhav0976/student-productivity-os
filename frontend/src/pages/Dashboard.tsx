@@ -86,65 +86,40 @@ export default function Dashboard() {
         <div className="xl:col-span-2 space-y-6">
 
           {/* Today's Focus */}
-
-          <Card className="rounded-2xl border bg-white p-6 shadow-sm">
-
+          <Card className="dark:!bg-slate-900/50 dark:!border-slate-800">
             <div className="flex items-center justify-between">
-
-              <h2 className="text-xl font-semibold">
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
                 Today's Focus
               </h2>
-
-              <ListTodo className="h-5 w-5 text-blue-600" />
-
+              <ListTodo className="h-5 w-5 text-brand-500" />
             </div >
-
             <div className="mt-6 space-y-4">
-
-              <div className="flex items-center justify-between rounded-xl border p-4 hover:bg-slate-50">
-
+              <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 p-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors cursor-pointer text-slate-700 dark:text-slate-200">
                 <span>Complete today's tasks</span>
-
-                <ArrowRight size={18} />
-
+                <ArrowRight size={18} className="text-slate-400" />
               </div >
 
-              <div className="flex items-center justify-between rounded-xl border p-4 hover:bg-slate-50">
-
+              <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 p-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors cursor-pointer text-slate-700 dark:text-slate-200">
                 <span>Log today's study session</span>
-
-                <ArrowRight size={18} />
-
+                <ArrowRight size={18} className="text-slate-400" />
               </div>
 
-              <div className="flex items-center justify-between rounded-xl border p-4 hover:bg-slate-50">
-
+              <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-800 p-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors cursor-pointer text-slate-700 dark:text-slate-200">
                 <span>Solve coding problems</span>
-
-                <ArrowRight size={18} />
-
+                <ArrowRight size={18} className="text-slate-400" />
               </div>
-
             </div>
-
           </Card>
 
           {/* Study Progress */}
-
-          <Card className="rounded-2xl border bg-white p-6 shadow-sm">
-
+          <Card className="dark:!bg-slate-900/50 dark:!border-slate-800">
             <div className="flex items-center justify-between">
-
-              <h2 className="text-xl font-semibold">
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
                 Study Progress
               </h2>
-
-              <BookOpen className="h-5 w-5 text-green-600" />
-
+              <BookOpen className="h-5 w-5 text-emerald-500" />
             </div >
-
             <div className="mt-6">
-
               <ProgressBar
                 value={Math.min(data.summary.studyHours * 20, 100)}
               />
@@ -166,57 +141,33 @@ export default function Dashboard() {
         <div className="space-y-6">
 
           {/* Streak */}
-
-          <Card className="rounded-2xl border bg-white p-6 shadow-sm">
-
+          <Card className="dark:!bg-slate-900/50 dark:!border-slate-800">
             <div className="flex items-center gap-3">
-
               <Flame className="text-orange-500" />
-
-              <h2 className="font-semibold">
-
+              <h2 className="font-semibold text-slate-900 dark:text-white">
                 Current Streak
-
               </h2>
-
             </div >
 
-            <div className="mt-5 text-4xl font-bold">
-
+            <div className="mt-5 text-4xl font-bold text-slate-900 dark:text-white">
               {data.summary.codingStreak}
-
             </div>
-
-            <p className="text-slate-500">
-
+            <p className="text-slate-500 dark:text-slate-400 mt-1">
               Keep learning every day 🚀
-
             </p>
-
           </Card>
 
           {/* Upcoming */}
-
-          <Card className="rounded-2xl border bg-white p-6 shadow-sm">
-
+          <Card className="dark:!bg-slate-900/50 dark:!border-slate-800">
             <div className="flex items-center gap-3">
-
-              <CalendarDays className="text-violet-600" />
-
-              <h2 className="font-semibold">
-
+              <CalendarDays className="text-purple-500" />
+              <h2 className="font-semibold text-slate-900 dark:text-white">
                 Upcoming
-
               </h2>
-
             </div>
-
             <div className="mt-5 space-y-3 text-sm">
-
-              <div className="rounded-lg bg-slate-100 p-3">
-
+              <div className="rounded-lg bg-slate-50 border border-slate-100 dark:border-slate-800 dark:bg-slate-900 p-3 text-slate-600 dark:text-slate-400">
                 No upcoming deadlines
-
               </div>
 
             </div>
@@ -224,51 +175,31 @@ export default function Dashboard() {
           </Card>
 
           {/* Quick Actions */}
-
-          <Card className="rounded-2xl border bg-white p-6 shadow-sm">
-
-            <h2 className="font-semibold">
-
+          <Card className="dark:!bg-slate-900/50 dark:!border-slate-800">
+            <h2 className="font-semibold text-slate-900 dark:text-white">
               Quick Actions
-
             </h2>
-
             <div className="mt-5 grid gap-3">
-
-              <Button>
-
+              <Button variant="primary" className="w-full justify-start">
                 <Plus size={18} />
-
                 New Task
-
               </Button>
 
-              <Button variant="secondary">
-
-                <FileText size={18} />
-
+              <Button variant="outline" className="w-full justify-start text-slate-600 dark:text-slate-300">
+                <FileText size={18} className="text-slate-400" />
                 New Note
-
               </Button>
 
-              <Button variant="secondary">
-
-                <BookOpen size={18} />
-
+              <Button variant="outline" className="w-full justify-start text-slate-600 dark:text-slate-300">
+                <BookOpen size={18} className="text-emerald-500" />
                 Study Session
-
               </Button>
 
-              <Button variant="secondary">
-
-                <Briefcase size={18} />
-
+              <Button variant="outline" className="w-full justify-start text-slate-600 dark:text-slate-300">
+                <Briefcase size={18} className="text-pink-500" />
                 Placement
-
               </Button>
-
             </div>
-
           </Card>
 
         </div>
