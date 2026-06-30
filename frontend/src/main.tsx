@@ -6,6 +6,7 @@ import Analytics from "./pages/Analytics";
 import Coding from "./pages/Coding";
 import Dashboard from "./pages/Dashboard";
 import Goals from "./pages/Goals";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Notes from "./pages/Notes";
 import Placement from "./pages/Placement";
@@ -28,7 +29,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Route path="/register" element={<Register />} />
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/study" element={<Study />} />
             <Route path="/placements" element={<Placement />} />
