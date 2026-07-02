@@ -68,6 +68,8 @@ export interface CodingProblem {
   platform: Platform;
   difficulty: Difficulty;
   topic: string;
+  language?: string;
+  notes?: string;
   solvedDate: string;
   problemUrl?: string;
   timeSpent?: number; // minutes

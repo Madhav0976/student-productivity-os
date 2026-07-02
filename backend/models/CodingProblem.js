@@ -11,6 +11,8 @@ const codingProblemSchema = new mongoose.Schema(
     },
     difficulty: { type: String, enum: ["Easy", "Medium", "Hard"], required: true },
     topic: { type: String, required: true, trim: true },
+    language: { type: String, default: "" },
+    notes: { type: String, default: "" },
     solvedDate: { type: Date, default: Date.now },
     problemUrl: { type: String, default: "" }
   },

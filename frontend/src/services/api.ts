@@ -99,6 +99,14 @@ class ApiClient {
     return this.request<CodingProblem>("/coding", { method: "POST", body: JSON.stringify(payload) });
   }
 
+  updateCodingProblem(id: string, payload: Partial<CodingProblem>) {
+    return this.request<CodingProblem>(`/coding/${id}`, { method: "PUT", body: JSON.stringify(payload) });
+  }
+
+  deleteCodingProblem(id: string) {
+    return this.request<{ message: string }>(`/coding/${id}`, { method: "DELETE" });
+  }
+
   notes(query = "") {
     return this.request<Note[]>(`/notes${query}`);
   }

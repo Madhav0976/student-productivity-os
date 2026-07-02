@@ -8,6 +8,8 @@ interface CodingState {
   
   fetch: () => Promise<void>;
   create: (payload: Partial<CodingProblem>) => Promise<CodingProblem>;
+  update: (id: string, payload: Partial<CodingProblem>) => Promise<void>;
+  remove: (id: string) => Promise<void>;
   getStreak: () => number;
   getTodayCount: () => number;
   getHeatmapData: () => Record<string, number>;
@@ -36,6 +38,16 @@ export const useCodingStore = create<CodingState>((set, get) => ({
     const problem = await api.createCodingProblem(payload);
     set((s) => ({ problems: [problem, ...s.problems] }));
     return problem;
+  },
+
+  update: async (id, payload) => {
+    const updated = await api.updateCodingProblem(id, payload);
+    set((s) => ({ problems: s.problems.map((p) => (p._id === id ? updated : p)) }));
+  },
+
+  remove: async (id) => {
+    await api.deleteCodingProblem(id);
+    set((s) => ({ problems: s.problems.filter((p) => p._id !== id) }));
   },
 
   getTodayCount: () => {
