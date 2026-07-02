@@ -31,6 +31,8 @@ body {
 @keyframes fadeIn   { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes scaleIn  { from { opacity: 0; transform: scale(0.95);      } to { opacity: 1; transform: scale(1);     } }
 @keyframes countUp  { from { opacity: 0; transform: translateY(8px);  } to { opacity: 1; transform: translateY(0); } }
+@keyframes shimmer  { 0% { transform: translateX(-100%) skewX(-12deg); } 100% { transform: translateX(200%) skewX(-12deg); } }
+@keyframes slideUp  { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
 .animate-fade-in  { animation: fadeIn  0.2s ease-out both; }
 .animate-scale-in { animation: scaleIn 0.18s cubic-bezier(.22,1,.36,1) both; }
@@ -158,6 +160,18 @@ body {
   /* ── Drawer ──────────────────────────────── */
   .drawer-overlay {
     @apply fixed inset-0 z-40 bg-black/30 backdrop-blur-sm;
+  }
+
+  .drawer-panel {
+    @apply fixed right-0 top-0 h-full z-50 bg-[var(--surface)] border-l border-[var(--border)]
+           shadow-2xl flex flex-col overflow-hidden
+           w-full sm:w-[420px] md:w-[460px];
+    animation: slideInRight 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
   }
 
   /* ── FAB ─────────────────────────────────── */
