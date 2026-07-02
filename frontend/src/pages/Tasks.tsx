@@ -223,8 +223,9 @@ export default function Tasks() {
         onDelete={async (id) => { await remove(id); setSelectedTask(null); }}
         onToggleStatus={async () => {
           await toggle(selectedTask._id);
+          // After toggle(), the store has updated — re-read directly
           const updated = tasks.find(t => t._id === selectedTask._id);
-          if (updated) setSelectedTask({ ...updated, status: updated.status === "Completed" ? "Pending" : "Completed" });
+          if (updated) setSelectedTask({ ...updated });
         }}
       />
     );

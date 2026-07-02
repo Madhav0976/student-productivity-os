@@ -138,6 +138,10 @@ class ApiClient {
   updateGoal(id: string, payload: Partial<Goal>) {
     return this.request<Goal>(`/goals/${id}`, { method: "PUT", body: JSON.stringify(payload) });
   }
+
+  deleteGoal(id: string) {
+    return this.request<{ message: string }>(`/goals/${id}`, { method: "DELETE" });
+  }
 }
 
 export const api = new ApiClient();

@@ -45,7 +45,7 @@ export const useGoalStore = create<GoalState>((set, get) => ({
   },
 
   remove: async (id) => {
-    // Soft delete (archive for now)
+    await api.deleteGoal(id);
     set((s) => ({ goals: s.goals.filter((g) => g._id !== id) }));
   },
 

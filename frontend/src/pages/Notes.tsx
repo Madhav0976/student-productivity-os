@@ -45,6 +45,7 @@ export default function Notes() {
       const target = e.target as HTMLElement;
       const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA";
       if (e.key === "Escape") {
+        if (isEditing) { setIsEditing(false); return; }
         if (selectedNote) { setSelectedNote(null); return; }
         if (quickAddOpen) { setQuickAddOpen(false); return; }
       }

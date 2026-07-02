@@ -45,6 +45,7 @@ export const usePlacementStore = create<PlacementState>((set, get) => ({
   },
 
   remove: async (id) => {
+    await api.deletePlacement(id);
     set((s) => ({ placements: s.placements.filter((p) => p._id !== id) }));
   },
 

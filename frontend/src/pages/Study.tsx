@@ -211,7 +211,7 @@ export default function Study() {
             {loading ? (
               <div className="space-y-3"><SkeletonRow /><SkeletonRow /></div>
             ) : todaySessions.length === 0 ? (
-              <EmptyState type="tasks" />
+              <EmptyState type="study" />
             ) : (
               <TodaySessions
                 sessions={todaySessions}
