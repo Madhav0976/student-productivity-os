@@ -35,6 +35,7 @@ export default function NoteDetail({ note, onBack, onEdit, onDelete, onTogglePin
             onClick={() => onTogglePin(note._id)}
             className={`btn-icon w-9 h-9 ${note.isPinned ? "text-amber-500 bg-amber-50 dark:bg-amber-500/10" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
             title="Toggle Pin"
+            aria-label="Toggle Pin"
           >
             <Pin size={16} />
           </button>
@@ -42,6 +43,7 @@ export default function NoteDetail({ note, onBack, onEdit, onDelete, onTogglePin
             onClick={() => onToggleFav(note._id)}
             className={`btn-icon w-9 h-9 ${note.isFavorite ? "text-amber-500 bg-amber-50 dark:bg-amber-500/10" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
             title="Toggle Favorite"
+            aria-label="Toggle Favorite"
           >
             <Star size={16} />
           </button>
@@ -49,6 +51,7 @@ export default function NoteDetail({ note, onBack, onEdit, onDelete, onTogglePin
             onClick={() => { if (confirm("Delete this note?")) onDelete(note._id); }}
             className="btn-icon w-9 h-9 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
             title="Delete Note"
+            aria-label="Delete Note"
           >
             <Trash2 size={16} />
           </button>

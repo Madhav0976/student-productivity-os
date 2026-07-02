@@ -46,11 +46,13 @@ export default function NotesToolbar({
             placeholder="Search notes..."
             data-search-input="true"
             className="inp pl-9 pr-4 text-sm w-full"
+            aria-label="Search notes"
           />
           {search && (
             <button
               onClick={() => onSearch("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              aria-label="Clear search"
             >
               <X size={14} />
             </button>

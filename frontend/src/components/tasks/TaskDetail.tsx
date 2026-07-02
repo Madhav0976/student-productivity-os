@@ -29,6 +29,7 @@ export default function TaskDetail({ task, onBack, onEdit, onDelete, onToggleSta
             onClick={() => { if (confirm("Delete this task?")) onDelete(task._id); }}
             className="btn-icon w-9 h-9 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
             title="Delete Task"
+            aria-label="Delete Task"
           >
             <Trash2 size={16} />
           </button>

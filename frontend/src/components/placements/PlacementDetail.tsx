@@ -17,6 +17,7 @@ export default function PlacementDetail({ placement, onBack, onEdit, onDelete }:
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+          aria-label="Back to placements"
         >
           <ArrowLeft size={18} /> Back to placements
         </button>
@@ -25,6 +26,7 @@ export default function PlacementDetail({ placement, onBack, onEdit, onDelete }:
             onClick={() => { if (confirm("Delete this application?")) onDelete(placement._id); }}
             className="btn-icon w-9 h-9 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
             title="Delete Application"
+            aria-label="Delete Application"
           >
             <Trash2 size={16} />
           </button>

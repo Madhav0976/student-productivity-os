@@ -28,6 +28,7 @@ export default function CodingDetail({ problem, onBack, onEdit, onDelete }: Codi
               rel="noopener noreferrer"
               className="btn-icon w-9 h-9 text-slate-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-500/10"
               title="Open Original URL"
+              aria-label="Open Original URL"
             >
               <ExternalLink size={16} />
             </a>
@@ -36,6 +37,7 @@ export default function CodingDetail({ problem, onBack, onEdit, onDelete }: Codi
             onClick={() => { if (confirm("Delete this problem?")) onDelete(problem._id); }}
             className="btn-icon w-9 h-9 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 ml-2"
             title="Delete Problem"
+            aria-label="Delete Problem"
           >
             <Trash2 size={16} />
           </button>

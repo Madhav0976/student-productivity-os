@@ -149,6 +149,7 @@ export default function QuickCapture() {
                 className="inp flex-1 resize-none min-h-[44px] max-h-[120px] py-2"
                 rows={1}
                 autoFocus
+                aria-label="Title"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(e as any); }
                 }}
@@ -165,6 +166,7 @@ export default function QuickCapture() {
                   : "Topic..."
                 }
                 className="inp"
+                aria-label="Additional details"
               />
             )}
 

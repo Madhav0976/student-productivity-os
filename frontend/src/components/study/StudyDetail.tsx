@@ -17,6 +17,7 @@ export default function StudyDetail({ session, onBack, onEdit, onDelete }: Study
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+          aria-label="Back to study list"
         >
           <ArrowLeft size={18} /> Back to study
         </button>
@@ -25,10 +26,11 @@ export default function StudyDetail({ session, onBack, onEdit, onDelete }: Study
             onClick={() => { if (confirm("Delete this session?")) onDelete(session._id); }}
             className="btn-icon w-9 h-9 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10"
             title="Delete Session"
+            aria-label="Delete Session"
           >
             <Trash2 size={16} />
           </button>
-          <Button variant="primary" onClick={onEdit} className="gap-2 ml-2 bg-emerald-600 hover:bg-emerald-700 border-emerald-600">
+          <Button variant="primary" onClick={onEdit} className="gap-2 ml-2 bg-emerald-600 hover:bg-emerald-700 border-emerald-600" aria-label="Edit Session">
             <Edit2 size={16} /> Edit Session
           </Button>
         </div>

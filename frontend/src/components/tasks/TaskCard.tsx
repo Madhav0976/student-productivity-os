@@ -137,6 +137,7 @@ export default function TaskCard({
                   : "text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 opacity-0 group-hover:opacity-100"
               }`}
               title={descExpanded ? "Collapse description" : "Expand description"}
+              aria-label={descExpanded ? "Collapse description" : "Expand description"}
             >
               <ChevronRight
                 size={14}
@@ -154,6 +155,7 @@ export default function TaskCard({
               }}
               className="btn-icon w-6 h-6 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-brand-500 dark:hover:text-brand-400 transition-all"
               title="Restore task"
+              aria-label="Restore task"
             >
               <RotateCcw size={13} />
             </button>
@@ -166,6 +168,7 @@ export default function TaskCard({
             }}
             className="btn-icon w-6 h-6 opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-all"
             title="Delete task"
+            aria-label="Delete task"
           >
             <Trash2 size={13} />
           </button>

@@ -32,9 +32,10 @@ export default function TaskToolbar() {
           placeholder="Search tasks..."
           className="inp pl-9 text-sm w-full"
           data-search-input="true"
+          aria-label="Search tasks"
         />
         {searchQuery && (
-          <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 btn-icon btn-ghost w-5 h-5">
+          <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 btn-icon btn-ghost w-5 h-5" aria-label="Clear search">
             <X size={12} />
           </button>
         )}
