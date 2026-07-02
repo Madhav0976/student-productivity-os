@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { parseISO, isToday, isFuture } from "date-fns";
 import { useAuthStore } from "../store/authStore";
 import { useTaskStore } from "../store/taskStore";
@@ -19,88 +19,120 @@ import ActivityFeed, { ActivityItem } from "../components/home/ActivityFeed";
 
 export default function Home() {
   const user = useAuthStore((s) => s.user);
-  const taskStore = useTaskStore();
-  const goalStore = useGoalStore();
-  const codingStore = useCodingStore();
-  const placementStore = usePlacementStore();
-  const studyStore = useStudyStore();
-  const noteStore = useNoteStore();
+  const tasks = useTaskStore((s) => s.tasks);
+  const fetchTasks = useTaskStore((s) => s.fetch);
+  const goals = useGoalStore((s) => s.goals);
+  const fetchGoals = useGoalStore((s) => s.fetch);
+  const codingProblems = useCodingStore((s) => s.problems);
+  const fetchCoding = useCodingStore((s) => s.fetch);
+  const getTodayCodingCount = useCodingStore((s) => s.getTodayCount);
+  const placements = usePlacementStore((s) => s.placements);
+  const fetchPlacements = usePlacementStore((s) => s.fetch);
+  const studySessions = useStudyStore((s) => s.sessions);
+  const fetchStudy = useStudyStore((s) => s.fetch);
+  const getTodayStudyHours = useStudyStore((s) => s.getTodayHours);
+  const notes = useNoteStore((s) => s.notes);
+  const fetchNotes = useNoteStore((s) => s.fetch);
 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
-      taskStore.fetch(),
-      goalStore.fetch(),
-      codingStore.fetch(),
-      placementStore.fetch(),
-      studyStore.fetch(),
-      noteStore.fetch(),
+      fetchTasks(),
+      fetchGoals(),
+      fetchCoding(),
+      fetchPlacements(),
+      fetchStudy(),
+      fetchNotes(),
     ]).finally(() => setLoading(false));
   }, []);
 
   const today = new Date().toISOString().split("T")[0];
 
   // Tasks
-  const todayTasks = taskStore.tasks.filter((t) => 
-    t.dueDate?.split("T")[0] === today || isToday(parseISO(t.dueDate))
-  );
-  const pendingTasks = taskStore.tasks.filter((t) => t.status !== "Completed");
-  const overdueTasks = taskStore.tasks.filter((t) => isOverdue(t.dueDate) && t.status !== "Completed");
-  const completedToday = todayTasks.filter((t) => t.status === "Completed").length;
+  const { todayTasks, pendingTasks, overdueTasks, completedToday } = useMemo(() => {
+    const today = new Date().toISOString().split("T")[0];
+    let completedToday = 0;
+    const todayTasks: any[] = [];
+    const pendingTasks: any[] = [];
+    const overdueTasks: any[] = [];
+    tasks.forEach(t => {
+      if (t.status !== "Completed") {
+        pendingTasks.push(t);
+        if (isOverdue(t.dueDate)) overdueTasks.push(t);
+      }
+      if (t.dueDate?.split("T")[0] === today || isToday(parseISO(t.dueDate))) {
+        todayTasks.push(t);
+        if (t.status === "Completed") completedToday++;
+      }
+    });
+    return { todayTasks, pendingTasks, overdueTasks, completedToday };
+  }, [tasks]);
 
   // Coding & Study
-  const todayCodingCount = codingStore.getTodayCount();
-  const todayCodingProblems = codingStore.problems.filter(p => isToday(parseISO(p.solvedDate)));
-  const todayStudyHours = studyStore.getTodayHours();
-  const todayStudySessions = studyStore.sessions.filter(s => isToday(parseISO(s.sessionDate)));
+  const { todayCodingCount, todayCodingProblems, todayStudyHours, todayStudySessions } = useMemo(() => {
+    return {
+      todayCodingCount: getTodayCodingCount(),
+      todayCodingProblems: codingProblems.filter(p => isToday(parseISO(p.solvedDate))),
+      todayStudyHours: getTodayStudyHours(),
+      todayStudySessions: studySessions.filter(s => isToday(parseISO(s.sessionDate)))
+    };
+  }, [codingProblems, getTodayCodingCount, studySessions, getTodayStudyHours]);
 
   // Placements
-  const activeApplications = placementStore.placements.filter((p) => !["Rejected", "Offer"].includes(p.status));
-  const todayPlacements = placementStore.placements.filter(p => p.updatedAt && isToday(parseISO(p.updatedAt)));
+  const { activeApplications, todayPlacements } = useMemo(() => {
+    return {
+      activeApplications: placements.filter((p) => !["Rejected", "Offer"].includes(p.status)),
+      todayPlacements: placements.filter(p => p.updatedAt && isToday(parseISO(p.updatedAt)))
+    };
+  }, [placements]);
 
   // Goals
-  const activeGoals = goalStore.goals.filter((g) => g.status !== "Completed");
+  const activeGoals = useMemo(() => goals.filter((g) => g.status !== "Completed"), [goals]);
 
   // Productivity Score logic (can be refined)
-  const productivityScore = Math.min(100, Math.round(
+  const productivityScore = useMemo(() => Math.min(100, Math.round(
     (completedToday > 0 ? 30 : 0) +
     (todayCodingCount > 0 ? 25 : 0) +
     (todayStudyHours > 0 ? 25 : 0) +
     (activeGoals.length > 0 ? 20 : 0)
-  ));
+  )), [completedToday, todayCodingCount, todayStudyHours, activeGoals.length]);
 
   // Upcoming Items (Next 7 days)
-  const upcomingItems: UpcomingItem[] = [];
-  
-  pendingTasks.forEach(t => {
-    if (isFuture(parseISO(t.dueDate)) && getDaysUntil(t.dueDate) <= 7) {
-      upcomingItems.push({ id: t._id, title: t.title, date: t.dueDate, type: "Task" });
-    }
-  });
-  activeGoals.forEach(g => {
-    if (isFuture(parseISO(g.targetDate)) && getDaysUntil(g.targetDate) <= 7) {
-      upcomingItems.push({ id: g._id, title: g.goalName, date: g.targetDate, type: "Goal" });
-    }
-  });
-  upcomingItems.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const upcomingItems: UpcomingItem[] = useMemo(() => {
+    const items: UpcomingItem[] = [];
+    pendingTasks.forEach((t: any) => {
+      if (isFuture(parseISO(t.dueDate)) && getDaysUntil(t.dueDate) <= 7) {
+        items.push({ id: t._id, title: t.title, date: t.dueDate, type: "Task" });
+      }
+    });
+    activeGoals.forEach((g: any) => {
+      if (isFuture(parseISO(g.targetDate)) && getDaysUntil(g.targetDate) <= 7) {
+        items.push({ id: g._id, title: g.goalName, date: g.targetDate, type: "Goal" });
+      }
+    });
+    items.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    return items;
+  }, [pendingTasks, activeGoals]);
 
   // Recent Activity Feed
-  let activities: ActivityItem[] = [];
-  taskStore.tasks.filter(t => t.status === "Completed").forEach(t => {
-    activities.push({ id: t._id, title: t.title, timestamp: t.updatedAt, type: 'task' });
-  });
-  noteStore.notes.forEach(n => {
-    activities.push({ id: n._id, title: n.title, timestamp: n.updatedAt, type: 'note' });
-  });
-  codingStore.problems.forEach(p => {
-    activities.push({ id: p._id, title: p.title, timestamp: p.createdAt || p.solvedDate, type: 'coding' });
-  });
-  studyStore.sessions.forEach(s => {
-    activities.push({ id: s._id, title: s.subject, timestamp: s.createdAt || s.sessionDate, type: 'study' });
-  });
-  // Sort activities by timestamp descending
-  activities.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  const activities: ActivityItem[] = useMemo(() => {
+    const items: ActivityItem[] = [];
+    tasks.filter(t => t.status === "Completed").forEach(t => {
+      items.push({ id: t._id, title: t.title, timestamp: t.updatedAt || "", type: 'task' });
+    });
+    notes.forEach(n => {
+      items.push({ id: n._id, title: n.title, timestamp: n.updatedAt || "", type: 'note' });
+    });
+    codingProblems.forEach(p => {
+      items.push({ id: p._id, title: p.title, timestamp: p.createdAt || p.solvedDate, type: 'coding' });
+    });
+    studySessions.forEach(s => {
+      items.push({ id: s._id, title: s.subject, timestamp: s.createdAt || s.sessionDate, type: 'study' });
+    });
+    items.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    return items;
+  }, [tasks, notes, codingProblems, studySessions]);
 
   // Progress metrics
   const taskProgress = todayTasks.length > 0 ? (completedToday / todayTasks.length) * 100 : 0;

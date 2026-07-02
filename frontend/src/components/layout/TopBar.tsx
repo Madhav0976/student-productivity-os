@@ -4,7 +4,10 @@ import { useAuthStore } from "../../store/authStore";
 import { useUIStore } from "../../store/uiStore";
 
 export default function TopBar() {
-  const { theme, toggleTheme, openCommandPalette, openQuickCapture } = useUIStore();
+  const theme = useUIStore((s) => s.theme);
+  const toggleTheme = useUIStore((s) => s.toggleTheme);
+  const openCommandPalette = useUIStore((s) => s.openCommandPalette);
+  const openQuickCapture = useUIStore((s) => s.openQuickCapture);
   const user = useAuthStore((s) => s.user);
 
   return (

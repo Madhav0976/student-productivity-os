@@ -3,7 +3,7 @@ import { CheckSquare, Target, Code2, Briefcase, FileText } from "lucide-react";
 import { useUIStore } from "../../store/uiStore";
 
 export default function QuickCaptureStrip() {
-  const { openQuickCapture } = useUIStore();
+  const openQuickCapture = useUIStore((s) => s.openQuickCapture);
 
   return (
     <div className="card p-3">

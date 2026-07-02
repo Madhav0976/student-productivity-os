@@ -25,7 +25,11 @@ const PAGES = [
 ];
 
 export default function CommandPalette() {
-  const { commandPaletteOpen, closeCommandPalette, openQuickCapture, toggleTheme, theme } = useUIStore();
+  const commandPaletteOpen = useUIStore((s) => s.commandPaletteOpen);
+  const closeCommandPalette = useUIStore((s) => s.closeCommandPalette);
+  const openQuickCapture = useUIStore((s) => s.openQuickCapture);
+  const toggleTheme = useUIStore((s) => s.toggleTheme);
+  const theme = useUIStore((s) => s.theme);
   const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
 

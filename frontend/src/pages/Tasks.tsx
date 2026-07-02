@@ -99,38 +99,53 @@ export default function Tasks() {
   }, [tasks, filter, debouncedSearch]);
 
   // ── Grouping ────────────────────────────────────────────────────────────────
-  const overdueTasks = filteredTasks.filter(
-    (t) => isOverdue(t.dueDate) && t.status !== "Completed"
-  );
-  const todayTasks = filteredTasks.filter(
-    (t) => isToday(parseISO(t.dueDate)) && t.status !== "Completed"
-  );
-  const upcomingTasks = filteredTasks.filter(
-    (t) =>
-      !isOverdue(t.dueDate) &&
-      !isToday(parseISO(t.dueDate)) &&
-      t.status !== "Completed"
-  );
-  const completedTasks = filteredTasks.filter((t) => t.status === "Completed");
+  // ── Grouping ────────────────────────────────────────────────────────────────
+  const { overdueTasks, todayTasks, upcomingTasks, completedTasks } = useMemo(() => {
+    const overdueTasks: Task[] = [];
+    const todayTasks: Task[] = [];
+    const upcomingTasks: Task[] = [];
+    const completedTasks: Task[] = [];
+
+    filteredTasks.forEach((t) => {
+      if (t.status === "Completed") {
+        completedTasks.push(t);
+      } else {
+        if (isOverdue(t.dueDate)) {
+          overdueTasks.push(t);
+        } else if (isToday(parseISO(t.dueDate))) {
+          todayTasks.push(t);
+        } else {
+          upcomingTasks.push(t);
+        }
+      }
+    });
+
+    return { overdueTasks, todayTasks, upcomingTasks, completedTasks };
+  }, [filteredTasks]);
 
   // ── Summary stats ───────────────────────────────────────────────────────────
-  const total = tasks.length;
-  const completed = tasks.filter((t) => t.status === "Completed").length;
-  const pending = total - completed;
-  const overallOverdue = tasks.filter(
-    (t) => isOverdue(t.dueDate) && t.status !== "Completed"
-  ).length;
-  const completedToday = tasks.filter(
-    (t) =>
-      t.status === "Completed" &&
-      isToday(parseISO(t.updatedAt || t.dueDate))
-  ).length;
-  const dueToday = tasks.filter(
-    (t) => isToday(parseISO(t.dueDate)) && t.status !== "Completed"
-  ).length;
-  const highPriority = tasks.filter(
-    (t) => t.priority === "High" && t.status !== "Completed"
-  ).length;
+  const { total, completed, pending, overallOverdue, completedToday, dueToday, highPriority } = useMemo(() => {
+    let completed = 0, overallOverdue = 0, completedToday = 0, dueToday = 0, highPriority = 0;
+    tasks.forEach(t => {
+      if (t.status === "Completed") {
+        completed++;
+        if (isToday(parseISO(t.updatedAt || t.dueDate))) completedToday++;
+      } else {
+        if (isOverdue(t.dueDate)) overallOverdue++;
+        if (isToday(parseISO(t.dueDate))) dueToday++;
+        if (t.priority === "High") highPriority++;
+      }
+    });
+    return {
+      total: tasks.length,
+      completed,
+      pending: tasks.length - completed,
+      overallOverdue,
+      completedToday,
+      dueToday,
+      highPriority
+    };
+  }, [tasks]);
 
   // ── Handlers ────────────────────────────────────────────────────────────────
   const handleAdd = async (taskData: Partial<Task>) => {
