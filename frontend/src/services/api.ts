@@ -75,6 +75,10 @@ class ApiClient {
     return this.request<StudySession>(`/study/${id}`, { method: "PUT", body: JSON.stringify(payload) });
   }
 
+  deleteStudySession(id: string) {
+    return this.request<{ message: string }>(`/study/${id}`, { method: "DELETE" });
+  }
+
   placements() {
     return this.request<Placement[]>("/placements");
   }

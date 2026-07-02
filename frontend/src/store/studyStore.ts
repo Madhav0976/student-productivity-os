@@ -14,6 +14,7 @@ interface StudyState {
   fetch: () => Promise<void>;
   create: (payload: Partial<StudySession>) => Promise<StudySession>;
   update: (id: string, payload: Partial<StudySession>) => Promise<void>;
+  remove: (id: string) => Promise<void>;
   startTimer: (subject: string) => void;
   stopTimer: () => void;
   tickTimer: () => void;
@@ -50,6 +51,11 @@ export const useStudyStore = create<StudyState>((set, get) => ({
   update: async (id, payload) => {
     const updated = await api.updateStudySession(id, payload);
     set((s) => ({ sessions: s.sessions.map((s) => (s._id === id ? updated : s)) }));
+  },
+
+  remove: async (id) => {
+    await api.deleteStudySession(id);
+    set((s) => ({ sessions: s.sessions.filter((s) => s._id !== id) }));
   },
 
   startTimer: (subject) => set({ timerActive: true, timerSubject: subject, timerSeconds: 0 }),

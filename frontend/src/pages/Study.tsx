@@ -1,89 +1,230 @@
-import { FormEvent, useMemo, useState } from "react";
-import EmptyState from "../components/ui/EmptyState";
-import PageHeader from "../components/PageHeader";
-import ProgressBar from "../components/ProgressBar";
-import Card from "../components/ui/Card";
-import Input from "../components/ui/Input";
-import Button from "../components/ui/Button";
-import { useAsyncData } from "../hooks/useAsyncData";
-import { api } from "../services/api";
+import React, { useEffect, useState, useMemo } from "react";
+import { useStudyStore } from "../store/studyStore";
 import { StudySession } from "../types";
+import { startOfWeek, format, isToday, parseISO, subDays } from "date-fns";
 
-const initialForm = { subject: "", topic: "", duration: 1, completed: false, notes: "", sessionDate: new Date().toISOString().slice(0, 10) };
+import StudyHeader from "../components/study/StudyHeader";
+import StudyQuickSession from "../components/study/StudyQuickSession";
+import StudyProgress from "../components/study/StudyProgress";
+import SubjectCard from "../components/study/SubjectCard";
+import TodaySessions from "../components/study/TodaySessions";
+import WeeklyOverview from "../components/study/WeeklyOverview";
+import RecentSessions from "../components/study/RecentSessions";
+import StudyDrawer from "../components/study/StudyDrawer";
+import EmptyState from "../components/ui/EmptyState";
+import { SkeletonStat, SkeletonCard, SkeletonRow } from "../components/ui/Skeleton";
+
+// Mocks a goal for this milestone
+const WEEKLY_GOAL_HOURS = 20;
 
 export default function Study() {
-  const [form, setForm] = useState(initialForm);
-  const { data, loading, reload } = useAsyncData<StudySession[]>(() => api.studySessions(), []);
-  const completed = data?.filter((session) => session.completed).length || 0;
-  const progress = useMemo(() => data?.length ? Math.round((completed / data.length) * 100) : 0, [data, completed]);
+  const { sessions, loading, fetch, create, update, remove, getTodayHours } = useStudyStore();
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<StudySession | null>(null);
 
-  const submit = async (event: FormEvent) => {
-    event.preventDefault();
-    await api.createStudySession(form);
-    setForm(initialForm);
-    await reload();
+  useEffect(() => {
+    fetch();
+  }, [fetch]);
+
+  // Derived state
+  const todaySessions = useMemo(() => sessions.filter((s) => s.sessionDate && isToday(parseISO(s.sessionDate))), [sessions]);
+  const recentSessions = useMemo(() => [...sessions].sort((a, b) => new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime()), [sessions]);
+  
+  // Weekly hours calculation
+  const { weeklyHours, daysData } = useMemo(() => {
+    const start = startOfWeek(new Date(), { weekStartsOn: 1 }); // Monday start
+    let totalMins = 0;
+    const dayTotals = [0, 0, 0, 0, 0, 0, 0];
+    
+    sessions.forEach(s => {
+      const d = parseISO(s.sessionDate);
+      if (d >= start) {
+        totalMins += s.duration;
+        const dayIdx = (d.getDay() + 6) % 7; // 0=Mon, 6=Sun
+        if (dayIdx >= 0 && dayIdx < 7) {
+          dayTotals[dayIdx] += s.duration;
+        }
+      }
+    });
+
+    const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const todayIdx = (new Date().getDay() + 6) % 7;
+    
+    return {
+      weeklyHours: totalMins / 60,
+      daysData: labels.map((label, i) => ({
+        label,
+        hours: dayTotals[i] / 60,
+        isToday: i === todayIdx
+      }))
+    };
+  }, [sessions]);
+
+  // Subject Stats
+  const subjectStats = useMemo(() => {
+    const stats: Record<string, { total: number, weekly: number }> = {};
+    const start = startOfWeek(new Date(), { weekStartsOn: 1 });
+    sessions.forEach(s => {
+      if (!stats[s.subject]) stats[s.subject] = { total: 0, weekly: 0 };
+      stats[s.subject].total += s.duration;
+      if (parseISO(s.sessionDate) >= start) {
+        stats[s.subject].weekly += s.duration;
+      }
+    });
+    return Object.entries(stats).map(([subject, data]) => ({ subject, ...data }));
+  }, [sessions]);
+
+  // Streak Calculation
+  const streak = useMemo(() => {
+    if (sessions.length === 0) return 0;
+    const dates = [...new Set(sessions.map(s => s.sessionDate.split("T")[0]))].sort((a, b) => b.localeCompare(a));
+    let currentStreak = 0;
+    let checkDate = new Date();
+    
+    // Check today and yesterday
+    const todayStr = format(checkDate, "yyyy-MM-dd");
+    if (!dates.includes(todayStr)) {
+      checkDate = subDays(checkDate, 1);
+      const yestStr = format(checkDate, "yyyy-MM-dd");
+      if (!dates.includes(yestStr)) return 0;
+    }
+
+    while (true) {
+      const dateStr = format(checkDate, "yyyy-MM-dd");
+      if (dates.includes(dateStr)) {
+        currentStreak++;
+        checkDate = subDays(checkDate, 1);
+      } else {
+        break;
+      }
+    }
+    return currentStreak;
+  }, [sessions]);
+
+  // Handlers
+  const handleToggleComplete = async (id: string) => {
+    const session = sessions.find((s) => s._id === id);
+    if (session) {
+      await update(id, { completed: !session.completed });
+    }
   };
 
   return (
-    <>
-      <PageHeader title="Study Planner" subtitle="Plan sessions, log duration, and track weekly or monthly completion." />
-      <section className="grid gap-6 lg:grid-cols-[360px_1fr]">
-        <Card className="dark:!bg-slate-900/50 dark:!border-slate-800">
-          <form onSubmit={submit} className="space-y-4">
-            <Input label="Subject" placeholder="E.g., Operating Systems" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} required />
-            <Input label="Topic" placeholder="E.g., Virtual Memory" value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} required />
-            <Input label="Duration (hrs)" type="number" min="0" step="0.5" value={form.duration} onChange={(e) => setForm({ ...form, duration: Number(e.target.value) })} required />
-            <Input label="Date" type="date" value={form.sessionDate} onChange={(e) => setForm({ ...form, sessionDate: e.target.value })} />
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Notes</label>
-              <textarea 
-                className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white min-h-[100px] resize-none" 
-                placeholder="Study session notes..." 
-                value={form.notes} 
-                onChange={(e) => setForm({ ...form, notes: e.target.value })} 
-              />
-            </div>
-            <div className="pt-2">
-              <Button type="submit" variant="primary" className="w-full">Add Study Session</Button>
-            </div>
-          </form>
-        </Card>
+    <div className="space-y-8 animate-fade-in max-w-6xl pb-24">
+      {/* Header */}
+      <StudyHeader
+        todayHours={getTodayHours()}
+        weeklyHours={weeklyHours}
+        weeklyGoal={WEEKLY_GOAL_HOURS}
+        streak={streak}
+        subjectCount={subjectStats.length}
+        onQuickAdd={() => setQuickAddOpen(true)}
+      />
+
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         
-        <div className="space-y-6">
-          <Card className="dark:!bg-slate-900/50 dark:!border-slate-800">
-            <div className="mb-2 flex justify-between text-sm font-medium text-slate-700 dark:text-slate-300">
-              <span>Completion Progress</span>
-              <span>{progress}%</span>
-            </div>
-            <ProgressBar value={progress} />
-          </Card>
+        {/* LEFT COLUMN */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Quick Add */}
+          <div className="card p-0 overflow-hidden shadow-sm dark:!bg-slate-900/50 dark:!border-slate-800">
+            <StudyQuickSession
+              isExpanded={quickAddOpen}
+              onExpand={() => setQuickAddOpen(true)}
+              onCollapse={() => setQuickAddOpen(false)}
+              onAdd={create}
+            />
+          </div>
+
+          {/* Progress */}
+          <StudyProgress
+            todayHours={getTodayHours()}
+            weeklyHours={weeklyHours}
+            weeklyGoal={WEEKLY_GOAL_HOURS}
+            streak={streak}
+            subjectsStudied={subjectStats.length}
+          />
+
+          {/* Subject Cards */}
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Subjects</h2>
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <SkeletonCard /><SkeletonCard />
+              </div>
+            ) : subjectStats.length === 0 ? (
+              <EmptyState type="study" action={{ label: "Log a session to track subjects", onClick: () => setQuickAddOpen(true) }} />
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {subjectStats.map(s => (
+                  <SubjectCard
+                    key={s.subject}
+                    subject={s.subject}
+                    totalMinutes={s.total}
+                    weeklyMinutes={s.weekly}
+                    weeklyGoalMinutes={(WEEKLY_GOAL_HOURS * 60) / subjectStats.length} // Dynamic goal per subject
+                    onClick={() => {}}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
           
-          {loading ? <p className="text-slate-500">Loading...</p> : data?.length ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              {data.map((session) => (
-                <Card key={session._id} className="dark:!bg-slate-900/50 dark:!border-slate-800 flex flex-col">
-                  <div className="mb-4">
-                    <h2 className="font-semibold text-slate-900 dark:text-white line-clamp-1" title={`${session.subject}: ${session.topic}`}>
-                      {session.subject}: {session.topic}
-                    </h2>
-                    <p className="text-sm text-slate-500 mt-1">{session.duration} hours • {new Date(session.sessionDate).toLocaleDateString()}</p>
-                    {session.notes && <p className="mt-3 text-sm text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 p-3 rounded-lg border border-slate-100 dark:border-slate-800 line-clamp-3">{session.notes}</p>}
-                  </div>
-                  <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800">
-                    <Button 
-                      variant={session.completed ? "outline" : "primary"} 
-                      className="w-full" 
-                      onClick={() => api.updateStudySession(session._id, { completed: !session.completed }).then(reload)}
-                    >
-                      {session.completed ? "Mark Pending" : "Mark Completed"}
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          ) : <EmptyState type="study" action={{ label: "Add your first planned session", onClick: () => {} }} />}
+          {/* Weekly Overview */}
+          <div>
+            {loading ? <SkeletonStat /> : (
+              <WeeklyOverview
+                days={daysData}
+                maxHours={Math.max(...daysData.map(d => d.hours), 4)}
+              />
+            )}
+          </div>
         </div>
-      </section>
-    </>
+
+        {/* RIGHT COLUMN */}
+        <div className="space-y-6">
+          {/* Today's Sessions */}
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Today's Sessions</h2>
+            {loading ? (
+              <div className="space-y-3"><SkeletonRow /><SkeletonRow /></div>
+            ) : todaySessions.length === 0 ? (
+              <EmptyState type="tasks" />
+            ) : (
+              <TodaySessions
+                sessions={todaySessions}
+                onToggleComplete={handleToggleComplete}
+                onClick={setSelectedSession}
+              />
+            )}
+          </div>
+
+          {/* Recent Sessions */}
+          <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Recent Sessions</h2>
+            {loading ? (
+              <div className="space-y-3"><SkeletonRow /><SkeletonRow /></div>
+            ) : recentSessions.length === 0 ? (
+              <EmptyState type="study" />
+            ) : (
+              <RecentSessions
+                sessions={recentSessions}
+                onClick={setSelectedSession}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Drawer */}
+      {selectedSession && (
+        <StudyDrawer
+          session={selectedSession}
+          onClose={() => setSelectedSession(null)}
+          onUpdate={update}
+          onDelete={remove}
+        />
+      )}
+    </div>
   );
 }
