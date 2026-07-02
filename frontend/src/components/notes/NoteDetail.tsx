@@ -30,7 +30,7 @@ export default function NoteDetail({ note, onBack, onEdit, onDelete, onTogglePin
         >
           <ArrowLeft size={18} /> Back to notes
         </button>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 flex-wrap justify-end">
           <button
             onClick={() => onTogglePin(note._id)}
             className={`btn-icon w-9 h-9 ${note.isPinned ? "text-amber-500 bg-amber-50 dark:bg-amber-500/10" : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"}`}
@@ -60,7 +60,7 @@ export default function NoteDetail({ note, onBack, onEdit, onDelete, onTogglePin
 
       {/* Header */}
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4 leading-tight">{note.title}</h1>
+        <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4 leading-tight">{note.title}</h1>
         <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500">
           <span className="font-semibold text-violet-600 dark:text-violet-400 bg-violet-50 dark:bg-violet-500/10 px-2.5 py-1 rounded-md uppercase tracking-wider text-[11px]">
             {note.category}

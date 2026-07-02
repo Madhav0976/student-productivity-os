@@ -38,9 +38,9 @@ export default function TaskDetail({ task, onBack, onEdit, onDelete, onToggleSta
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl p-8 shadow-sm">
+      <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4 sm:p-8 shadow-sm">
         <div className="flex items-start justify-between gap-6 mb-6">
-          <h1 className={`text-3xl font-bold ${isCompleted ? "text-slate-400 line-through decoration-slate-300 dark:decoration-slate-600" : "text-slate-900 dark:text-white"}`}>
+          <h1 className={`text-2xl sm:text-3xl font-bold ${isCompleted ? "text-slate-400 line-through decoration-slate-300 dark:decoration-slate-600" : "text-slate-900 dark:text-white"}`}>
             {task.title}
           </h1>
         </div>

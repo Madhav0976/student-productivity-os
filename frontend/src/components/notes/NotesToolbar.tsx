@@ -38,7 +38,7 @@ export default function NotesToolbar({
     <div className="flex flex-col gap-3">
       {/* Search + controls row */}
       <div className="flex items-center gap-2 flex-wrap">
-        <div className="relative flex-1 min-w-[200px]">
+        <div className="relative flex-1 min-w-0">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             value={search}

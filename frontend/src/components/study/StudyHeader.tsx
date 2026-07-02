@@ -26,7 +26,7 @@ export default function StudyHeader({
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-emerald-500 font-semibold">Workspace</p>
-          <h1 className="text-4xl font-bold text-slate-900 dark:text-white mt-2">Study Planner</h1>
+          <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white mt-2">Study Planner</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2 max-w-xl">
             Track sessions, build study streaks, and know exactly what needs attention.
           </p>

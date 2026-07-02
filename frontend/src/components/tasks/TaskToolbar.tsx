@@ -22,15 +22,15 @@ export default function TaskToolbar() {
   };
 
   return (
-    <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex flex-col gap-2">
       {/* Search */}
-      <div className="relative flex-1 min-w-[180px]">
+      <div className="relative w-full">
         <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
         <input
           value={searchQuery}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search tasks..."
-          className="inp pl-9 text-sm"
+          className="inp pl-9 text-sm w-full"
           data-search-input="true"
         />
         {searchQuery && (
@@ -40,15 +40,15 @@ export default function TaskToolbar() {
         )}
       </div>
 
-      {/* Filter pills */}
-      <div className="flex items-center gap-1">
+      {/* Filter pills — horizontal scroll on small screens */}
+      <div className="flex items-center gap-1 overflow-x-auto pb-1 no-scrollbar">
         {FILTERS.map(({ key, label }) => {
           const count = getFilterCount(key);
           return (
             <button
               key={key}
               onClick={() => setFilter(key)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 flex items-center gap-1.5 ${
+              className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 flex items-center gap-1.5 ${
                 filter === key
                   ? "bg-brand/10 border border-brand/20 text-brand-600 dark:bg-brand-600/15 dark:border-brand-600/30 dark:text-white"
                   : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-white/5 border border-transparent"

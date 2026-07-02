@@ -34,7 +34,7 @@ export default function NoteEditor({ note, onCancel, onSave }: NoteEditorProps) 
   };
 
   return (
-    <div className="animate-fade-in max-w-4xl mx-auto pb-24 h-screen flex flex-col">
+    <div className="animate-fade-in max-w-4xl mx-auto pb-24 min-h-[calc(100vh-120px)] flex flex-col">
       {/* Top Bar */}
       <div className="flex items-center justify-between mb-8 py-4 border-b border-slate-100 dark:border-slate-800">
         <button

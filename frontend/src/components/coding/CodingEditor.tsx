@@ -55,7 +55,7 @@ export default function CodingEditor({ problem, onCancel, onSave }: CodingEditor
         </Button>
       </div>
 
-      <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl p-8 shadow-sm space-y-6">
+      <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-xl p-4 sm:p-8 shadow-sm space-y-6">
         <div>
           <label className="text-xs text-slate-500 font-semibold uppercase tracking-wider block mb-2">Problem Name</label>
           <input
