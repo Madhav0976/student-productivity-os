@@ -1,273 +1,235 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { FileText, Plus, Search, Pin, Star, X, Hash, ChevronRight, Trash2, Save } from "lucide-react";
 import { useNoteStore } from "../store/noteStore";
 import { Note, NoteCategory } from "../types";
-import EmptyState from "../components/ui/EmptyState";
-import Card from "../components/ui/Card";
-import { SkeletonCard } from "../components/ui/Skeleton";
 import { formatRelative } from "../utils/dates";
 import { useDebounce } from "../hooks/useDebounce";
 import toast from "react-hot-toast";
 
-const CATEGORIES: { key: string; label: string; color: string }[] = [
-  { key: "all", label: "All Notes", color: "text-slate-400" },
-  { key: "College", label: "College", color: "text-blue-400" },
-  { key: "Placement", label: "Placement", color: "text-pink-400" },
-  { key: "DSA", label: "DSA", color: "text-amber-400" },
-  { key: "Project", label: "Project", color: "text-emerald-400" },
-  { key: "Personal", label: "Personal", color: "text-purple-400" },
-];
-
-function NoteEditor({ note, onClose, onSave, onDelete }: {
-  note: Note | null;
-  onClose: () => void;
-  onSave: (payload: Partial<Note>) => Promise<void>;
-  onDelete?: (id: string) => Promise<void>;
-}) {
-  const [title, setTitle] = useState(note?.title || "");
-  const [content, setContent] = useState(note?.content || "");
-  const [category, setCategory] = useState<NoteCategory>(note?.category || "Personal");
-  const [saving, setSaving] = useState(false);
-
-  // Auto-save
-  const save = async (silent = false) => {
-    if (!title.trim()) return;
-    setSaving(true);
-    try {
-      await onSave({ title, content, category });
-      if (!silent) toast.success(note ? "Note saved!" : "Note created!");
-    } catch { toast.error("Failed to save"); }
-    setSaving(false);
-  };
-
-  // Ctrl+S save
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
-        e.preventDefault();
-        save(true);
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [title, content, category]);
-
-  return (
-    <div className="flex flex-col h-full animate-fade-in">
-      {/* Editor toolbar */}
-      <div className="flex items-center gap-2 px-6 py-3 border-b border-slate-100 dark:border-[var(--border)]">
-        <select value={category} onChange={(e) => setCategory(e.target.value as NoteCategory)} className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-xs outline-none py-1.5 px-2 text-slate-700 dark:text-slate-300">
-          {CATEGORIES.slice(1).map((c) => <option key={c.key}>{c.key}</option>)}
-        </select>
-        <div className="flex-1" />
-        <span className="text-2xs text-slate-400 dark:text-slate-600">{saving ? "Saving..." : "⌘S to save"}</span>
-        {onDelete && note && (
-          <button
-            onClick={async () => { if (confirm("Delete this note?")) { await onDelete(note._id); onClose(); } }}
-            className="btn-icon btn-ghost text-red-400"
-          >
-            <Trash2 size={13} />
-          </button>
-        )}
-        <button onClick={() => save()} className="btn-brand btn-sm">
-          <Save size={12} /> Save
-        </button>
-        <button onClick={onClose} className="btn-icon btn-ghost">
-          <X size={14} />
-        </button>
-      </div>
-
-      <div className="flex-1 px-8 py-6 overflow-y-auto">
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Untitled"
-          className="bg-transparent border-none outline-none text-2xl font-bold text-slate-900 dark:text-white w-full mb-4 placeholder:text-slate-400 dark:placeholder:text-slate-700"
-        />
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Start writing... (Markdown supported)"
-          className="bg-transparent border-none outline-none text-slate-700 dark:text-slate-300 w-full resize-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
-          rows={20}
-        />
-        <div className="text-2xs text-slate-700 mt-4">
-          Supports **bold**, *italic*, # headings, `code`, - lists
-        </div>
-      </div>
-    </div>
-  );
-}
+import NotesHeader from "../components/notes/NotesHeader";
+import QuickNote from "../components/notes/QuickNote";
+import NotesToolbar from "../components/notes/NotesToolbar";
+import PinnedNotes from "../components/notes/PinnedNotes";
+import RecentNotes from "../components/notes/RecentNotes";
+import CategoriesGrid from "../components/notes/CategoriesGrid";
+import NotesGrid from "../components/notes/NotesGrid";
+import NoteDrawer from "../components/notes/NoteDrawer";
+import EmptyState from "../components/ui/EmptyState";
+import { SkeletonCard } from "../components/ui/Skeleton";
 
 export default function Notes() {
-  const { notes, loading, fetch, create, update, remove, activeNote, setActive, searchQuery, setSearch, activeCategory, setCategory } = useNoteStore();
-  const [creating, setCreating] = useState(false);
-  const debouncedSearch = useDebounce(searchQuery, 250);
+  const {
+    notes, loading, fetch, create, update, remove,
+    togglePin, toggleFavorite,
+  } = useNoteStore();
 
-  useEffect(() => { fetch(); }, []);
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
 
-  const filtered = useMemo(() => {
+  // Local filter state (not stored globally, just UI state)
+  const [search, setSearch] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [sort, setSort] = useState("updated");
+  const [pinnedOnly, setPinnedOnly] = useState(false);
+
+  const debouncedSearch = useDebounce(search, 200);
+
+  useEffect(() => {
+    fetch();
+  }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA";
+      if (e.key === "Escape") {
+        if (selectedNote) { setSelectedNote(null); return; }
+        if (quickAddOpen) { setQuickAddOpen(false); return; }
+      }
+      if (isInput) return;
+      if (e.key === "n" || e.key === "N") { e.preventDefault(); setQuickAddOpen(true); }
+      if (e.key === "/") {
+        e.preventDefault();
+        document.querySelector<HTMLInputElement>("[data-search-input]")?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedNote, quickAddOpen]);
+
+  // Derived state
+  const pinnedNotes = useMemo(() => notes.filter(n => n.isPinned), [notes]);
+  const recentNotes = useMemo(() =>
+    [...notes]
+      .filter(n => !n.isPinned)
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+      .slice(0, 5),
+    [notes]
+  );
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    notes.forEach(n => { counts[n.category] = (counts[n.category] || 0) + 1; });
+    return counts;
+  }, [notes]);
+
+  const lastEdited = useMemo(() => {
+    if (!notes.length) return null;
+    const sorted = [...notes].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    return formatRelative(sorted[0].updatedAt);
+  }, [notes]);
+
+  // Filtered + sorted notes
+  const filteredNotes = useMemo(() => {
     let result = notes;
-    if (activeCategory !== "all") result = result.filter((n) => n.category === activeCategory);
+
+    if (pinnedOnly) result = result.filter(n => n.isPinned);
+    if (activeCategory !== "all") result = result.filter(n => n.category === activeCategory);
+
     if (debouncedSearch) {
       const q = debouncedSearch.toLowerCase();
-      result = result.filter((n) => n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q));
+      result = result.filter(n =>
+        n.title.toLowerCase().includes(q) ||
+        n.content?.toLowerCase().includes(q) ||
+        n.category.toLowerCase().includes(q) ||
+        n.tags?.some(t => t.toLowerCase().includes(q))
+      );
     }
-    const pinned = result.filter((n) => n.isPinned);
-    const rest = result.filter((n) => !n.isPinned);
-    return [...pinned, ...rest];
-  }, [notes, activeCategory, debouncedSearch]);
 
-  const openNote = (note: Note) => { setCreating(false); setActive(note); };
+    return [...result].sort((a, b) => {
+      if (sort === "title") return a.title.localeCompare(b.title);
+      if (sort === "created") return new Date(b.createdAt || b.updatedAt).getTime() - new Date(a.createdAt || a.updatedAt).getTime();
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    });
+  }, [notes, pinnedOnly, activeCategory, debouncedSearch, sort]);
 
-  const handleSave = async (payload: Partial<Note>) => {
-    if (activeNote) {
-      await update(activeNote._id, payload);
-    } else {
-      const note = await create({ ...payload, category: payload.category || "Personal" });
-      setActive(note);
+  const isFiltered = !!debouncedSearch || activeCategory !== "all" || pinnedOnly;
+
+  const handleAdd = async (payload: Partial<Note>) => {
+    try {
+      await create({ ...payload, category: payload.category || "Personal" });
+      toast.success("Note created!");
+    } catch {
+      toast.error("Failed to create note");
     }
-    setCreating(false);
   };
-
-  const handleNew = () => {
-    setActive(null);
-    setCreating(true);
-  };
-
-  // Editor mode
-  if (activeNote || creating) {
-    return (
-      <Card className="h-[calc(100vh-120px)] flex flex-col p-0 overflow-hidden dark:!bg-slate-900/50 dark:!border-slate-800">
-        <NoteEditor
-          note={activeNote}
-          onClose={() => { setActive(null); setCreating(false); }}
-          onSave={handleSave}
-          onDelete={remove}
-        />
-      </Card>
-    );
-  }
 
   return (
-    <div className="space-y-4 animate-fade-in">
+    <div className="space-y-8 animate-fade-in max-w-7xl pb-24">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <FileText size={18} className="text-slate-400 dark:text-slate-300" />
-            Notes
-          </h1>
-          <p className="text-sm text-slate-500 mt-0.5">{notes.length} note{notes.length !== 1 ? "s" : ""}</p>
-        </div>
-        <button onClick={handleNew} className="btn-brand btn-sm shadow-sm shadow-brand/20" id="notes-new">
-          <Plus size={14} /> New Note
-        </button>
+      <NotesHeader
+        totalNotes={notes.length}
+        pinnedCount={pinnedNotes.length}
+        categoriesCount={Object.keys(categoryCounts).length}
+        lastEdited={lastEdited}
+        onNewNote={() => setQuickAddOpen(true)}
+      />
+
+      {/* Quick Add card */}
+      <div className="card p-0 overflow-hidden shadow-sm dark:!bg-slate-900/50 dark:!border-slate-800">
+        <QuickNote
+          isExpanded={quickAddOpen}
+          onExpand={() => setQuickAddOpen(true)}
+          onCollapse={() => setQuickAddOpen(false)}
+          onAdd={handleAdd}
+        />
       </div>
 
-      <div className="flex gap-4 flex-col sm:flex-row">
-        {/* Category sidebar */}
-        <div className="sm:w-44 flex-shrink-0">
-          <Card className="p-2 space-y-0.5 dark:!bg-slate-900/50 dark:!border-slate-800">
-            {CATEGORIES.map(({ key, label, color }) => (
-              <button
-                key={key}
-                onClick={() => setCategory(key)}
-                className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150 ${
-                  activeCategory === key
-                    ? "bg-brand/10 border border-brand/20 text-brand-600 dark:bg-brand-600/15 dark:border-brand-600/20 dark:text-white"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 dark:text-slate-500 dark:hover:text-slate-300 dark:hover:bg-white/5"
-                }`}
-              >
-                <Hash size={12} className={color} />
-                <span className="truncate">{label}</span>
-                <span className="ml-auto text-2xs text-slate-400 dark:text-slate-600">
-                  {key === "all" ? notes.length : notes.filter((n) => n.category === key).length}
-                </span>
-              </button>
-            ))}
-          </Card>
+      {/* Toolbar */}
+      <NotesToolbar
+        search={search}
+        onSearch={setSearch}
+        activeCategory={activeCategory}
+        onCategory={setActiveCategory}
+        sort={sort}
+        onSort={setSort}
+        pinnedOnly={pinnedOnly}
+        onPinnedOnly={setPinnedOnly}
+        count={filteredNotes.length}
+      />
+
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
         </div>
-
-        {/* Notes list */}
-        <div className="flex-1 min-w-0">
-          {/* Search */}
-          <div className="relative mb-3">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              value={searchQuery}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search notes..."
-              className="w-full rounded-lg border border-slate-200 bg-white pl-9 pr-4 py-2 text-sm outline-none transition focus:border-brand-500 focus:ring-4 focus:ring-brand-100 dark:border-slate-800 dark:bg-slate-900/50 dark:text-white"
-              id="notes-search"
+      ) : notes.length === 0 ? (
+        <EmptyState
+          type="notes"
+          action={{ label: "Create your first note", onClick: () => setQuickAddOpen(true) }}
+        />
+      ) : (
+        <div className="space-y-10">
+          {/* Pinned (only when not filtered) */}
+          {!isFiltered && pinnedNotes.length > 0 && (
+            <PinnedNotes
+              notes={pinnedNotes}
+              onClick={setSelectedNote}
+              onUnpin={(id) => togglePin(id)}
             />
-          </div>
+          )}
 
-          {loading ? (
-            <div className="space-y-2">{Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}</div>
-          ) : filtered.length === 0 ? (
-            <EmptyState
-              type="notes"
-              action={{ label: "Create your first note", onClick: handleNew }}
-            />
-          ) : (
-            <div className="space-y-1">
-              {/* Pinned section */}
-              {filtered.some((n) => n.isPinned) && (
-                <>
-                  <p className="section-title px-1 pb-1">Pinned</p>
-                  {filtered.filter((n) => n.isPinned).map((note) => (
-                    <NoteRow key={note._id} note={note} onClick={openNote} onTogglePin={(id) => useNoteStore.getState().togglePin(id)} onToggleFav={(id) => useNoteStore.getState().toggleFavorite(id)} />
-                  ))}
-                  <p className="section-title px-1 pb-1 pt-3">Other</p>
-                </>
-              )}
-              {filtered.filter((n) => !n.isPinned).map((note) => (
-                <NoteRow key={note._id} note={note} onClick={openNote} onTogglePin={(id) => useNoteStore.getState().togglePin(id)} onToggleFav={(id) => useNoteStore.getState().toggleFavorite(id)} />
-              ))}
+          {/* Recent (only on unfiltered "all" view) */}
+          {!isFiltered && recentNotes.length > 0 && (
+            <div>
+              <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
+                Recently Edited
+              </h2>
+              <RecentNotes notes={recentNotes} onClick={setSelectedNote} />
             </div>
           )}
-        </div>
-      </div>
-    </div>
-  );
-}
 
-function NoteRow({ note, onClick, onTogglePin, onToggleFav }: {
-  note: Note;
-  onClick: (n: Note) => void;
-  onTogglePin: (id: string) => void;
-  onToggleFav: (id: string) => void;
-}) {
-  const catColor = CATEGORIES.find((c) => c.key === note.category)?.color || "text-slate-400";
-  return (
-    <Card
-      className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:border-brand-500/30 hover:bg-brand-50 dark:hover:bg-brand-600/5 transition-all duration-150 group p-0 dark:!bg-slate-900/40 dark:!border-slate-800"
-      variant="outlined"
-    >
-      <div className="flex-1 flex items-center gap-3 min-w-0" onClick={() => onClick(note)}>
-        <FileText size={15} className={catColor + " flex-shrink-0"} />
-        <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-slate-900 dark:text-slate-200 group-hover:text-brand-700 dark:group-hover:text-white truncate transition-colors">{note.title}</p>
-          <p className="text-2xs text-slate-500 dark:text-slate-600 mt-0.5 line-clamp-1">{note.content?.slice(0, 80) || "Empty"}</p>
+          {/* Categories (only on unfiltered view) */}
+          {!isFiltered && (
+            <CategoriesGrid
+              categoryCounts={categoryCounts}
+              activeCategory={activeCategory}
+              onSelectCategory={setActiveCategory}
+            />
+          )}
+
+          {/* All / Filtered Notes */}
+          <div>
+            {isFiltered && (
+              <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
+                {filteredNotes.length} Result{filteredNotes.length !== 1 ? "s" : ""}
+              </h2>
+            )}
+            {!isFiltered && (
+              <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
+                All Notes
+              </h2>
+            )}
+
+            {filteredNotes.length === 0 ? (
+              <EmptyState
+                type={debouncedSearch ? "search" : "notes"}
+                title={debouncedSearch ? `No results for "${debouncedSearch}"` : undefined}
+                action={
+                  !debouncedSearch
+                    ? { label: "Create a note", onClick: () => setQuickAddOpen(true) }
+                    : undefined
+                }
+              />
+            ) : (
+              <NotesGrid
+                notes={filteredNotes}
+                onClick={setSelectedNote}
+                onTogglePin={togglePin}
+              />
+            )}
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button
-          onClick={(e) => { e.stopPropagation(); onTogglePin(note._id); }}
-          className={`btn-icon btn-ghost w-6 h-6 ${note.isPinned ? "text-brand-400" : "text-slate-600"}`}
-        >
-          <Pin size={11} />
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); onToggleFav(note._id); }}
-          className={`btn-icon btn-ghost w-6 h-6 ${note.isFavorite ? "text-amber-400" : "text-slate-600"}`}
-        >
-          <Star size={11} />
-        </button>
-      </div>
-      <span className="text-2xs text-slate-400 dark:text-slate-600 ml-2 flex-shrink-0">{formatRelative(note.updatedAt)}</span>
-      <ChevronRight size={13} className="text-slate-400 dark:text-slate-700 group-hover:text-slate-600 dark:group-hover:text-slate-500 flex-shrink-0" />
-    </Card>
+      )}
+
+      {/* Drawer */}
+      {selectedNote && (
+        <NoteDrawer
+          note={selectedNote}
+          onClose={() => setSelectedNote(null)}
+          onUpdate={update}
+          onDelete={remove}
+        />
+      )}
+    </div>
   );
 }
