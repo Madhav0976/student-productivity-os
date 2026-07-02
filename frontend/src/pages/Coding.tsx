@@ -9,7 +9,8 @@ import StreakCard from "../components/coding/StreakCard";
 import DifficultyOverview from "../components/coding/DifficultyOverview";
 import TopicCard from "../components/coding/TopicCard";
 import RecentProblems from "../components/coding/RecentProblems";
-import CodingDrawer from "../components/coding/CodingDrawer";
+import CodingDetail from "../components/coding/CodingDetail";
+import CodingEditor from "../components/coding/CodingEditor";
 import WeeklyOverview from "../components/study/WeeklyOverview"; // Reusing from study
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonStat, SkeletonCard, SkeletonRow } from "../components/ui/Skeleton";
@@ -20,6 +21,7 @@ export default function Coding() {
   const { problems, loading, fetch, create, update, remove, getStreak, getTodayCount, getDifficultyBreakdown } = useCodingStore();
   const [quickLogOpen, setQuickLogOpen] = useState(false);
   const [selectedProblem, setSelectedProblem] = useState<CodingProblem | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     fetch();
@@ -97,6 +99,26 @@ export default function Coding() {
 
   const lastPractice = problems.length > 0 ? recentProblems[0].solvedDate : null;
 
+  if (selectedProblem) {
+    if (isEditing) {
+      return (
+        <CodingEditor
+          problem={selectedProblem}
+          onCancel={() => setIsEditing(false)}
+          onSave={update}
+        />
+      );
+    }
+    return (
+      <CodingDetail
+        problem={selectedProblem}
+        onBack={() => { setSelectedProblem(null); setIsEditing(false); }}
+        onEdit={() => setIsEditing(true)}
+        onDelete={async (id) => { await remove(id); setSelectedProblem(null); }}
+      />
+    );
+  }
+
   return (
     <div className="space-y-8 animate-fade-in max-w-6xl pb-24">
       <CodingHeader
@@ -171,14 +193,7 @@ export default function Coding() {
         </div>
       </div>
 
-      {selectedProblem && (
-        <CodingDrawer
-          problem={selectedProblem}
-          onClose={() => setSelectedProblem(null)}
-          onUpdate={update}
-          onDelete={remove}
-        />
-      )}
+
     </div>
   );
 }

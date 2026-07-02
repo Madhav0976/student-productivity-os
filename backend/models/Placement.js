@@ -8,10 +8,13 @@ const placementSchema = new mongoose.Schema(
     applicationDate: { type: Date, required: true },
     status: {
       type: String,
-      enum: ["Applied", "OA Completed", "Interview", "Rejected", "Offer"],
+      enum: ["Dream", "Applied", "OA", "Interview", "HR", "Offer", "Rejected"],
       default: "Applied"
     },
-    notes: { type: String, default: "" }
+    notes: { type: String, default: "" },
+    salary: { type: String, default: "" },
+    location: { type: String, default: "" },
+    url: { type: String, default: "" }
   },
   { timestamps: true }
 );

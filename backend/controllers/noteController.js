@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Note from "../models/Note.js";
 
-const allowedNoteUpdates = ["title", "content", "category"];
+const allowedNoteUpdates = ["title", "content", "category", "tags", "isPinned", "isFavorite"];
 
 const pickAllowedFields = (body, allowedFields) => {
   return allowedFields.reduce((updates, field) => {

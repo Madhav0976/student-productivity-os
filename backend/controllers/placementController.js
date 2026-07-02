@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Placement from "../models/Placement.js";
 
-const allowedPlacementUpdates = ["companyName", "role", "applicationDate", "status", "notes"];
+const allowedPlacementUpdates = ["companyName", "role", "applicationDate", "status", "notes", "salary", "location", "url"];
 
 const pickAllowedFields = (body, allowedFields) => {
   return allowedFields.reduce((updates, field) => {

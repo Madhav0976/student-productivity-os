@@ -91,6 +91,10 @@ class ApiClient {
     return this.request<Placement>(`/placements/${id}`, { method: "PUT", body: JSON.stringify(payload) });
   }
 
+  deletePlacement(id: string) {
+    return this.request<{ message: string }>(`/placements/${id}`, { method: "DELETE" });
+  }
+
   codingProblems() {
     return this.request<CodingProblem[]>("/coding");
   }

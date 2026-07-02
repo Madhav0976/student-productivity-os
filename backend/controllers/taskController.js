@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Task from "../models/Task.js";
 
-const allowedTaskUpdates = ["title", "description", "priority", "dueDate", "status"];
+const allowedTaskUpdates = ["title", "description", "priority", "dueDate", "status", "tags", "reminder"];
 
 const pickAllowedFields = (body, allowedFields) => {
   return allowedFields.reduce((updates, field) => {

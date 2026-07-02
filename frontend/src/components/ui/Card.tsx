@@ -8,6 +8,7 @@ export interface CardProps {
   action?: React.ReactNode;
   className?: string;
   variant?: 'default' | 'outlined' | 'ghost';
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -17,6 +18,7 @@ const Card: React.FC<CardProps> = ({
   action,
   className,
   variant = 'default',
+  onClick,
 }) => {
   const hasHeader = title || subtitle || action;
 
@@ -38,6 +40,7 @@ const Card: React.FC<CardProps> = ({
         variants[variant],
         className
       )}
+      onClick={onClick}
     >
       {hasHeader && (
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">

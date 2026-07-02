@@ -11,7 +11,8 @@ import TaskToolbar from "../components/tasks/TaskToolbar";
 import TaskQuickAdd from "../components/tasks/TaskQuickAdd";
 import TaskProgress from "../components/tasks/TaskProgress";
 import TaskGroup from "../components/tasks/TaskGroup";
-import TaskDrawer from "../components/tasks/TaskDrawer";
+import TaskDetail from "../components/tasks/TaskDetail";
+import TaskEditor from "../components/tasks/TaskEditor";
 import BulkActionsBar from "../components/tasks/BulkActionsBar";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonRow } from "../components/ui/Skeleton";
@@ -20,6 +21,7 @@ export default function Tasks() {
   const { tasks, loading, fetch, create, update, remove, toggle, filter, searchQuery, setSearch } =
     useTaskStore();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const debouncedSearch = useDebounce(searchQuery, 250);
@@ -42,7 +44,7 @@ export default function Tasks() {
         target.tagName === "SELECT";
 
       if (e.key === "Escape") {
-        if (selectedTask) { setSelectedTask(null); return; }
+        if (selectedTask) { setSelectedTask(null); setIsEditing(false); return; }
         if (quickAddOpen) { setQuickAddOpen(false); return; }
         if (bulkMode) { setSelectedIds(new Set()); return; }
       }
@@ -203,6 +205,31 @@ export default function Tasks() {
 
   const isFiltered = !!searchQuery || filter !== "all";
 
+  if (selectedTask) {
+    if (isEditing) {
+      return (
+        <TaskEditor
+          task={selectedTask}
+          onCancel={() => setIsEditing(false)}
+          onSave={update}
+        />
+      );
+    }
+    return (
+      <TaskDetail
+        task={selectedTask}
+        onBack={() => { setSelectedTask(null); setIsEditing(false); }}
+        onEdit={() => setIsEditing(true)}
+        onDelete={async (id) => { await remove(id); setSelectedTask(null); }}
+        onToggleStatus={async () => {
+          await toggle(selectedTask._id);
+          const updated = tasks.find(t => t._id === selectedTask._id);
+          if (updated) setSelectedTask({ ...updated, status: updated.status === "Completed" ? "Pending" : "Completed" });
+        }}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl pb-24">
       {/* Header */}
@@ -311,15 +338,7 @@ export default function Tasks() {
         </div>
       </div>
 
-      {/* Task Drawer */}
-      {selectedTask && (
-        <TaskDrawer
-          task={selectedTask}
-          onClose={() => setSelectedTask(null)}
-          onUpdate={update}
-          onDelete={remove}
-        />
-      )}
+
 
       {/* Bulk Actions Bar */}
       <BulkActionsBar

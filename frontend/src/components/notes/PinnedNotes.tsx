@@ -46,9 +46,6 @@ export default function PinnedNotes({ notes, onClick, onUnpin }: PinnedNotesProp
             </button>
             <Pin size={12} className="text-amber-500 mb-2" />
             <h3 className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1 pr-5">{note.title}</h3>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1.5 line-clamp-2 leading-relaxed">
-              {note.content || "No content"}
-            </p>
             <div className="flex items-center justify-between mt-3">
               <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 {note.category}

@@ -12,7 +12,8 @@ import PinnedNotes from "../components/notes/PinnedNotes";
 import RecentNotes from "../components/notes/RecentNotes";
 import CategoriesGrid from "../components/notes/CategoriesGrid";
 import NotesGrid from "../components/notes/NotesGrid";
-import NoteDrawer from "../components/notes/NoteDrawer";
+import NoteDetail from "../components/notes/NoteDetail";
+import NoteEditor from "../components/notes/NoteEditor";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonCard } from "../components/ui/Skeleton";
 
@@ -24,6 +25,7 @@ export default function Notes() {
 
   const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   // Local filter state (not stored globally, just UI state)
   const [search, setSearch] = useState("");
@@ -113,6 +115,28 @@ export default function Notes() {
       toast.error("Failed to create note");
     }
   };
+
+  if (selectedNote) {
+    if (isEditing) {
+      return (
+        <NoteEditor
+          note={selectedNote}
+          onCancel={() => setIsEditing(false)}
+          onSave={update}
+        />
+      );
+    }
+    return (
+      <NoteDetail
+        note={selectedNote}
+        onBack={() => { setSelectedNote(null); setIsEditing(false); }}
+        onEdit={() => setIsEditing(true)}
+        onDelete={async (id) => { await remove(id); setSelectedNote(null); }}
+        onTogglePin={togglePin}
+        onToggleFav={toggleFavorite}
+      />
+    );
+  }
 
   return (
     <div className="space-y-8 animate-fade-in max-w-7xl pb-24">
@@ -221,15 +245,6 @@ export default function Notes() {
         </div>
       )}
 
-      {/* Drawer */}
-      {selectedNote && (
-        <NoteDrawer
-          note={selectedNote}
-          onClose={() => setSelectedNote(null)}
-          onUpdate={update}
-          onDelete={remove}
-        />
-      )}
     </div>
   );
 }

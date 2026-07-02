@@ -6,7 +6,7 @@ const codingProblemSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true },
     platform: {
       type: String,
-      enum: ["LeetCode", "Codeforces", "HackerRank", "GeeksForGeeks"],
+      enum: ["LeetCode", "Codeforces", "HackerRank", "GeeksForGeeks", "CodeChef", "AtCoder", "Other"],
       required: true
     },
     difficulty: { type: String, enum: ["Easy", "Medium", "Hard"], required: true },
@@ -14,7 +14,7 @@ const codingProblemSchema = new mongoose.Schema(
     language: { type: String, default: "" },
     notes: { type: String, default: "" },
     solvedDate: { type: Date, default: Date.now },
-    problemUrl: { type: String, default: "" }
+    url: { type: String, default: "" }
   },
   { timestamps: true }
 );

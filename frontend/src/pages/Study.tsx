@@ -10,7 +10,8 @@ import SubjectCard from "../components/study/SubjectCard";
 import TodaySessions from "../components/study/TodaySessions";
 import WeeklyOverview from "../components/study/WeeklyOverview";
 import RecentSessions from "../components/study/RecentSessions";
-import StudyDrawer from "../components/study/StudyDrawer";
+import StudyDetail from "../components/study/StudyDetail";
+import StudyEditor from "../components/study/StudyEditor";
 import EmptyState from "../components/ui/EmptyState";
 import { SkeletonStat, SkeletonCard, SkeletonRow } from "../components/ui/Skeleton";
 
@@ -21,6 +22,7 @@ export default function Study() {
   const { sessions, loading, fetch, create, update, remove, getTodayHours } = useStudyStore();
   const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<StudySession | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     fetch();
@@ -107,7 +109,27 @@ export default function Study() {
     if (session) {
       await update(id, { completed: !session.completed });
     }
-  };
+  }
+
+  if (selectedSession) {
+    if (isEditing) {
+      return (
+        <StudyEditor
+          session={selectedSession}
+          onCancel={() => setIsEditing(false)}
+          onSave={update}
+        />
+      );
+    }
+    return (
+      <StudyDetail
+        session={selectedSession}
+        onBack={() => { setSelectedSession(null); setIsEditing(false); }}
+        onEdit={() => setIsEditing(true)}
+        onDelete={async (id) => { await remove(id); setSelectedSession(null); }}
+      />
+    );
+  }
 
   return (
     <div className="space-y-8 animate-fade-in max-w-6xl pb-24">
@@ -216,15 +238,7 @@ export default function Study() {
         </div>
       </div>
 
-      {/* Drawer */}
-      {selectedSession && (
-        <StudyDrawer
-          session={selectedSession}
-          onClose={() => setSelectedSession(null)}
-          onUpdate={update}
-          onDelete={remove}
-        />
-      )}
+
     </div>
   );
 }

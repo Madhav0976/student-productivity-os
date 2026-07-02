@@ -41,10 +41,7 @@ export function NoteCard({ note, onClick, onTogglePin }: NoteCardProps) {
         )}
       </div>
 
-      {/* Preview */}
-      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed mb-3">
-        {note.content || "No content yet."}
-      </p>
+      {/* Preview Removed */}
 
       {/* Tags */}
       {note.tags && note.tags.length > 0 && (

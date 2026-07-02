@@ -36,9 +36,6 @@ export default function RecentNotes({ notes, onClick }: RecentNotesProps) {
             <h4 className="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors truncate">
               {note.title}
             </h4>
-            <p className="text-xs text-slate-500 truncate mt-0.5">
-              {note.content?.slice(0, 60) || "Empty note"}
-            </p>
           </div>
           <div className="flex flex-col items-end gap-1 flex-shrink-0">
             <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${CAT_BADGE[note.category] || CAT_BADGE.Personal}`}>

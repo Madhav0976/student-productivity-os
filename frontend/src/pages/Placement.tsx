@@ -8,11 +8,15 @@ import { useAsyncData } from "../hooks/useAsyncData";
 import { api } from "../services/api";
 import { Placement as PlacementItem, PlacementStatus } from "../types";
 import { Briefcase, CheckCircle2, MessageSquare } from "lucide-react";
+import PlacementDetail from "../components/placements/PlacementDetail";
+import PlacementEditor from "../components/placements/PlacementEditor";
 
 const initialForm = { companyName: "", role: "", applicationDate: new Date().toISOString().slice(0, 10), status: "Applied" as PlacementStatus, notes: "" };
 
 export default function Placement() {
   const [form, setForm] = useState(initialForm);
+  const [selectedPlacement, setSelectedPlacement] = useState<PlacementItem | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const { data, reload } = useAsyncData<PlacementItem[]>(() => api.placements(), []);
   const offers = data?.filter((item) => item.status === "Offer").length || 0;
   const interviews = data?.filter((item) => ["Interview", "Offer", "Rejected"].includes(item.status)).length || 0;
@@ -25,6 +29,41 @@ export default function Placement() {
     setForm(initialForm);
     await reload();
   };
+
+  const update = async (id: string, payload: Partial<PlacementItem>) => {
+    await api.updatePlacement(id, payload);
+    await reload();
+    if (selectedPlacement?._id === id) {
+      const item = (await api.placements()).find(p => p._id === id);
+      if (item) setSelectedPlacement(item);
+    }
+  };
+
+  const remove = async (id: string) => {
+    await api.deletePlacement(id);
+    await reload();
+    setSelectedPlacement(null);
+  };
+
+  if (selectedPlacement) {
+    if (isEditing) {
+      return (
+        <PlacementEditor
+          placement={selectedPlacement}
+          onCancel={() => setIsEditing(false)}
+          onSave={update}
+        />
+      );
+    }
+    return (
+      <PlacementDetail
+        placement={selectedPlacement}
+        onBack={() => { setSelectedPlacement(null); setIsEditing(false); }}
+        onEdit={() => setIsEditing(true)}
+        onDelete={remove}
+      />
+    );
+  }
 
   return (
     <>
@@ -44,7 +83,13 @@ export default function Placement() {
             <div className="space-y-1.5">
                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Status</label>
                <select className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-100 dark:border-slate-700 dark:bg-slate-900 dark:text-white" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as PlacementStatus })}>
-                 <option>Applied</option><option>OA Completed</option><option>Interview</option><option>Rejected</option><option>Offer</option>
+                 <option value="Dream">Dream</option>
+                 <option value="Applied">Applied</option>
+                 <option value="OA">OA Completed</option>
+                 <option value="Interview">Interview</option>
+                 <option value="HR">HR Round</option>
+                 <option value="Rejected">Rejected</option>
+                 <option value="Offer">Offer</option>
                </select>
             </div>
             
@@ -65,7 +110,7 @@ export default function Placement() {
         
         <div className="grid gap-4 md:grid-cols-2 content-start">
           {data?.map((item) => (
-            <Card key={item._id} className="dark:!bg-slate-900/50 dark:!border-slate-800 flex flex-col p-5">
+            <Card key={item._id} className="dark:!bg-slate-900/50 dark:!border-slate-800 flex flex-col p-5 cursor-pointer hover:border-pink-300 dark:hover:border-pink-500/50 transition-colors" onClick={() => setSelectedPlacement(item)}>
               <div className="flex-1">
                 <h2 className="font-semibold text-lg text-slate-900 dark:text-white truncate" title={item.companyName}>{item.companyName}</h2>
                 <p className="text-sm font-medium text-brand-500 dark:text-brand-400 mt-0.5">{item.role}</p>
@@ -76,9 +121,16 @@ export default function Placement() {
                 <select 
                   className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition-all focus:border-brand-500 dark:border-slate-700 dark:bg-slate-900/50 dark:text-white" 
                   value={item.status} 
+                  onClick={(e) => e.stopPropagation()}
                   onChange={(e) => api.updatePlacement(item._id, { status: e.target.value as PlacementStatus }).then(reload)}
                 >
-                  <option>Applied</option><option>OA Completed</option><option>Interview</option><option>Rejected</option><option>Offer</option>
+                  <option value="Dream">Dream</option>
+                  <option value="Applied">Applied</option>
+                  <option value="OA">OA Completed</option>
+                  <option value="Interview">Interview</option>
+                  <option value="HR">HR Round</option>
+                  <option value="Rejected">Rejected</option>
+                  <option value="Offer">Offer</option>
                 </select>
               </div>
             </Card>

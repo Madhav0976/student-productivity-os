@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import CodingProblem from "../models/CodingProblem.js";
 
-const allowedCodingProblemUpdates = ["title", "platform", "difficulty", "topic", "language", "notes", "solvedDate", "problemUrl"];
+const allowedCodingProblemUpdates = ["title", "platform", "difficulty", "topic", "language", "notes", "solvedDate", "url"];
 
 const pickAllowedFields = (body, allowedFields) => {
   return allowedFields.reduce((updates, field) => {
